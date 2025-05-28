@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake and Ladder</title>
+    <link rel="stylesheet" href="myStyle.css" />
+  </head>
+  <body>
+    <header>Snake-Ladder Game</header>
+    <div id="settings-button"></div>
+    <div class="container">
+      <!-- Settings Menu -->
+      <div class="settings-box">
+        <h2>Settings Menu</h2>
+        <div class="settings-1">
+          <img id="board-preview" src="Resources/Board/Board-1.jpg" />
+          <br />
+          Choose board:
+          <select id="select-board" name="board">
+            <option value="Board-1">Board-1</option>
+            <option value="Board-2">Board-2</option>
+            <option value="Board-3">Board-3</option>
+            <option value="Board-4">Board-4</option>
+          </select>
+        </div>
+        <div class="settings-2"></div>
+        <button id="save-button">SAVE</button>
+      </div>
+
+      <!-- Board region-->
+      <div class="board-region">
+        <div class="game">
+          <div class="message invisible">/Empty\</div>
+          <div
+            class="player overlap"
+            style="
+              grid-row-start: 10;
+              grid-row-end: 11;
+              grid-column-start: 1;
+              grid-column-end: 2;
+            "
+          ></div>
+          <div
+            class="player-old"
+            style="
+              grid-row-start: 10;
+              grid-row-end: 11;
+              grid-column-start: 1;
+              grid-column-end: 2;
+            "
+          ></div>
+          <div
+            class="computer"
+            style="
+              grid-row-start: 10;
+              grid-row-end: 11;
+              grid-column-start: 1;
+              grid-column-end: 2;
+            "
+          ></div>
+          <div
+            class="computer-old"
+            style="
+              grid-row-start: 10;
+              grid-row-end: 11;
+              grid-column-start: 1;
+              grid-column-end: 2;
+            "
+          ></div>
+        </div>
+      </div>
+      <!-- Rolling region -->
+      <div class="rolling-region">
+        <h2>Rolling Region:</h2>
+        <img src="Resources/Dices/Dice 1/One.png" alt="One" class="dice" />
+        <img src="Resources/Dices/Dice 1/Two.png" alt="Two" class="dice" />
+        <img src="Resources/Dices/Dice 1/Three.png" alt="Three" class="dice" />
+        <img src="Resources/Dices/Dice 1/Four.png" alt="Four" class="dice" />
+        <img src="Resources/Dices/Dice 1/Five.png" alt="Five" class="dice" />
+        <img src="Resources/Dices/Dice 1/Six.png" alt="Six" class="dice" />
+        <button id="roll-button">ROLL</button>
+        <button id="reset-button">RESET</button>
+      </div>
+    </div>
+    <footer>All rights reserved &copy Anurag Mishra</footer>
+    <script type="module" src="myConfig.js"></script>
+    <script type="module" src="myScript.js"></script>
+  </body>
+</html>
