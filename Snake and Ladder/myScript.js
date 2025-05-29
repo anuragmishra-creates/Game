@@ -1,6 +1,8 @@
 import { snakeMap, ladderMap } from "./myConfig.js";
 
+let backgroundMusic = new Audio("Resources/Sound/Background-Music.mp3");
 let dices = document.querySelectorAll(".dice");
+let audio = document.querySelector("#special-effects-audio");
 let message = document.querySelector(".message");
 let container = document.querySelector(".container");
 let game = document.querySelector(".game");
@@ -11,12 +13,20 @@ let settingsButton = document.querySelector("#settings-button");
 let settingsBox = document.querySelector(".settings-box");
 let selectBoard = document.querySelector("#select-board");
 let boardImage = document.querySelector("#board-preview");
+let volumeSlider = document.querySelector("#volume");
+let forcedRollCheckbox = document.querySelector('input[name="forcedRoll"]');
+let diceNumberInput1 = document.querySelector('#dice-number-1-forced');
+let diceNumberInput2 = document.querySelector('#dice-number-2-forced');
 
 let player = document.querySelector(".player");
 let computer = document.querySelector(".computer");
 let playerOld = document.querySelector(".player-old");
 let computerOld = document.querySelector(".computer-old");
 
+backgroundMusic.currentTime = 0;
+backgroundMusic.loop = true;
+
+let boardChanged = false;
 let diceValueMinus1 = 0; //Ranges from 0 to 5
 let playersTurn = true;
 let playerMovesRight = true;
@@ -49,6 +59,11 @@ function displayMessage(msg, time_duration = 3000, shadow_color = "white") {
         container.style.boxShadow = "none";
     }, time_duration);
 
+}
+
+function playSound(sound_source, time_duration = 3000) {
+    audio.src = sound_source;
+    audio.play();
 }
 
 function getCoord(ele) {
@@ -91,7 +106,16 @@ function overLap() {
     return false;
 }
 
+backgroundMusic.addEventListener("canplaythrough", () => {
+    backgroundMusic.play();
+});
+
+volumeSlider.addEventListener('input', function () {
+    backgroundMusic.volume = this.value / 100;
+});
+
 resetButton.addEventListener("click", () => {
+    backgroundMusic.currentTime = 0;
     resetGame();
 });
 
@@ -102,10 +126,14 @@ settingsButton.addEventListener("click", () => {
 
 selectBoard.addEventListener("change", () => {
     boardImage.src = `Resources/Board/${selectBoard.value}.jpg`;
+    boardChanged = true;
 });
 
 saveButton.addEventListener("click", () => {
-    resetGame();
+    if (boardChanged) {
+        resetGame();
+        boardChanged = false;
+    }
     boardIndex = parseInt(selectBoard.value.at(-1)) - 1;
     game.style.backgroundImage = `url(Resources/Board/${selectBoard.value}.jpg)`;
     settingsBox.classList.add("invisible");
@@ -113,8 +141,21 @@ saveButton.addEventListener("click", () => {
 });
 
 rollButton.addEventListener("click", () => {
+    let forced = forcedRollCheckbox.checked;
+    let value1 = parseInt(diceNumberInput1.value);
+    let value2 = parseInt(diceNumberInput2.value);
+    let offset;
+
     /* Rolling the dice */
-    let offset = 6 + Math.floor(Math.random() * 6) + 1; // 6 + [1–6]
+    if (!forced) {
+        offset = 6 + (Math.floor(Math.random() * 6) + 1); // 6 + [1–6]
+    }
+    else if (playersTurn && value1 >= 1 && value1 <= 6) {
+        offset = 12 + value1 - (diceValueMinus1 + 1); // Force this roll
+    }
+    else if (!playersTurn && value2 >= 1 && value2 <= 6) {
+        offset = 12 + value2 - (diceValueMinus1 + 1); // Force this roll
+    }
     let delay_ms = 75; // delay_ms between steps in ms
     rollButton.disabled = true; // disable rollButton during roll
     for (let i = 0; i < offset; i++) {
@@ -128,7 +169,6 @@ rollButton.addEventListener("click", () => {
     /* Conclusions of the roll */
     setTimeout(() => {
         console.log("Final dice value:", diceValueMinus1 + 1);
-        rollButton.disabled = false;    // Enabling the rollButton only after the animation ends
 
         /*                    Movements:                     */
         // Incremental movements:
@@ -149,6 +189,7 @@ rollButton.addEventListener("click", () => {
             let [currRow, currCol] = getCoord(ele);
             let key = `${currRow},${currCol}`;
 
+            // Ladder:
             let newCoord = ladderMap[boardIndex].get(key);
             if (newCoord !== undefined) {
                 setNewCoordinates(ele, newCoord.row, newCoord.col);
@@ -156,19 +197,20 @@ rollButton.addEventListener("click", () => {
                     (newCoord.row & 1) ? (playerMovesRight = false) : (playerMovesRight = true);
                 else
                     (newCoord.row & 1) ? (computerMovesRight = false) : (computerMovesRight = true);
-
+                playSound("Resources/Sound/Ladder.mp3", 3000);
                 displayMessage("Took the ladder!", 3000, "green");
+
             }
 
+            // Snake:
             newCoord = snakeMap[boardIndex].get(key);
             if (newCoord !== undefined) {
-
                 setNewCoordinates(ele, newCoord.row, newCoord.col);
                 if (playersTurn)
                     (newCoord.row & 1) ? (playerMovesRight = false) : (playerMovesRight = true);
                 else
                     (newCoord.row & 1) ? (computerMovesRight = false) : (computerMovesRight = true);
-
+                playSound("Resources/Sound/Snake.mp3", 3000);
                 displayMessage("Eaten by the snake!", 3000, "red");
             }
 
@@ -185,6 +227,7 @@ rollButton.addEventListener("click", () => {
                     rollButton.disabled = false;
                 }, 5000);
             }
+            rollButton.disabled = false;    // Enabling the rollButton only after the animation ends
             playersTurn = !playersTurn;
         }, (diceValueMinus1 + 1) * delay_ms * 2);
     }, offset * delay_ms);

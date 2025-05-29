@@ -7,8 +7,11 @@
     <link rel="stylesheet" href="myStyle.css" />
   </head>
   <body>
+    <audio id="special-effects-audio"></audio>
+
     <header>Snake-Ladder Game</header>
     <div id="settings-button"></div>
+
     <div class="container">
       <!-- Settings Menu -->
       <div class="settings-box">
@@ -24,7 +27,44 @@
             <option value="Board-4">Board-4</option>
           </select>
         </div>
-        <div class="settings-2"></div>
+        <div class="settings-2">
+          <label>
+            Forced roll: <input type="checkbox" name="forcedRoll" /> </label
+          ><br />
+          <label for="dice-number-1-forced"
+            >The dice value for Player 1 (1 to 6):</label
+          >
+          <input
+            type="number"
+            id="dice-number-1-forced"
+            name="dice-number-1-forced"
+            min="1"
+            max="6"
+          />
+          <br />
+          <label for="dice-number-2-forced"
+            >The dice value for Player 2 (1 to 6):</label
+          >
+          <input
+            type="number"
+            id="dice-number-2-forced"
+            name="dice-number-2-forced"
+            min="1"
+            max="6"
+          />
+          <br />
+          <br />
+          <label for="volume">Volume:</label>
+          <input
+            type="range"
+            id="volume"
+            name="volume"
+            min="0"
+            max="100"
+            value="100"
+          />
+        </div>
+
         <button id="save-button">SAVE</button>
       </div>
 
