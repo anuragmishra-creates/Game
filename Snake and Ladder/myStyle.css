@@ -130,7 +130,7 @@ footer {
 
 .settings-1 img {
     display: block;
-    width: 50%;
+    width: 45%;
     height: auto;
     margin: auto;
     border: 6px solid #a52a2a;
@@ -367,7 +367,7 @@ button:hover {
     .settings-box {
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 5fr 5fr 1fr;
-        height: 90vh;
+        height: 70vh;
         width: 60vw;
     }
 
@@ -427,7 +427,7 @@ button:hover {
     }
 
     .settings-box {
-        height: 60vh;
+        height: 80vh;
         width: 90vw;
     }
 }
