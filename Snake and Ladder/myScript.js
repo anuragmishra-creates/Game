@@ -196,7 +196,7 @@ loadGameButton.addEventListener("click", () => {
     else if (modeIndex === 1)
         displayMessage("The game has been LOADED in REVERSED!", 4000, "purple", "white");
     else
-        displayMessage("The game has been LOADED in MIXED!", 4000, "darkorange", "black");
+        displayMessage(`The game has been LOADED in MIXED: ${gameReversed===true?'Reversed':'Normal'}!`, 4000, "darkorange", "black");
     modeChanged = false; //Because on loading we don't want to reset otherwise no worth in it!
 });
 
