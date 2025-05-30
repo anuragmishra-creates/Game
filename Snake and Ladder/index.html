@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snake and Ladder</title>
     <link rel="stylesheet" href="myStyle.css" />
+    <link rel="icon" type="image/x-icon" href="./Resources/favicon-32x32.png" />
   </head>
   <body>
     <audio id="special-effects-audio"></audio>
+    <div id="settings-button"></div>
 
     <header>Snake-Ladder Game</header>
-    <div id="settings-button"></div>
-    
+
     <div class="container">
       <div class="message invisible">/Empty\</div>
       <!-- Settings Menu -->
@@ -29,32 +30,14 @@
           </select>
         </div>
         <div class="settings-2">
-          <label>
-            Forced roll: <input type="checkbox" name="forcedRoll" /> </label
-          ><br />
-          <label for="dice-number-1-forced"
-            >The dice value for Player 1 (1 to 6):</label
-          >
-          <input
-            type="number"
-            id="dice-number-1-forced"
-            name="dice-number-1-forced"
-            min="1"
-            max="6"
-          />
-          <br />
-          <label for="dice-number-2-forced"
-            >The dice value for Player 2 (1 to 6):</label
-          >
-          <input
-            type="number"
-            id="dice-number-2-forced"
-            name="dice-number-2-forced"
-            min="1"
-            max="6"
-          />
-          <br />
-          <br />
+          Choose mode:
+          <select id="select-mode" name="mode">
+            <option value="Classic">Classic</option>
+            <option value="Reversed">Reversed</option>
+            <option value="Mixed">Mixed</option>
+          </select>
+          <br>
+          <br>
           <label for="volume">Volume:</label>
           <input
             type="range"
@@ -64,10 +47,37 @@
             max="100"
             value="100"
           />
-          <br/>
+          <br />
           Save or Load game:
-          <button id="save-game-button"> SAVE </button>
-          <button id="load-game-button"> LOAD </button>
+          <button id="save-game-button">SAVE</button>
+          <button id="load-game-button">LOAD</button>
+          <label>
+            <br />
+            Forced roll: <input type="checkbox" name="forcedRoll" /> </label
+          ><br />
+          <div class="dice-force-options invisible">
+            <label for="dice-number-1-forced"
+              >The dice value for Player 1 (1 to 6):</label
+            >
+            <input
+              type="number"
+              id="dice-number-1-forced"
+              name="dice-number-1-forced"
+              min="1"
+              max="6"
+            />
+            <br />
+            <label for="dice-number-2-forced"
+              >The dice value for Player 2 (1 to 6):</label
+            >
+            <input
+              type="number"
+              id="dice-number-2-forced"
+              name="dice-number-2-forced"
+              min="1"
+              max="6"
+            />
+          </div>
         </div>
 
         <button id="save-button">SAVE</button>

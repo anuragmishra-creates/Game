@@ -1,4 +1,4 @@
-import { snakeMap, ladderMap } from "./myConfig.js";
+import { snakeMap, ladderMap, snakeMapReversed, ladderMapReversed } from "./myConfig.js";
 
 let backgroundMusic = new Audio("Resources/Sound/Background-Music.mp3");
 let dices = document.querySelectorAll(".dice");
@@ -9,19 +9,19 @@ let game = document.querySelector(".game");
 let rollButton = document.querySelector("#roll-button");
 let resetButton = document.querySelector("#reset-button");
 // Settings:
-let saveButton = document.querySelector("#save-button");
+let saveSettingsButton = document.querySelector("#save-button");
 let settingsButton = document.querySelector("#settings-button");
 let settingsBox = document.querySelector(".settings-box");
 let selectBoard = document.querySelector("#select-board");
 let boardImage = document.querySelector("#board-preview");
+let selectMode = document.querySelector("#select-mode");
 let volumeSlider = document.querySelector("#volume");
 let forcedRollCheckbox = document.querySelector('input[name="forcedRoll"]');
+let diceForcedOptions = document.querySelector(".dice-force-options");
 let diceNumberInput1 = document.querySelector('#dice-number-1-forced');
 let diceNumberInput2 = document.querySelector('#dice-number-2-forced');
 let saveGameButton = document.querySelector("#save-game-button");
-let loadGameButton = document.querySelector("#load-game-button")
-console.log("Save button is:", saveGameButton);
-console.log("Load button is:", loadGameButton);
+let loadGameButton = document.querySelector("#load-game-button");
 
 let player = document.querySelector(".player");
 let computer = document.querySelector(".computer");
@@ -30,12 +30,16 @@ let computerOld = document.querySelector(".computer-old");
 
 backgroundMusic.loop = true;
 let boardChanged = false;
+let modeChanged = false;
 let diceValueMinus1 = 0; //Ranges from 0 to 5
 let playersTurn = true;
 let playerMovesRight = true;
 let computerMovesRight = true;
 let boardIndex = 0;
+let gameReversed = false;
+let modeIndex = 0;
 
+// Does NOT reset Settings (Board, Mode, Volume, Forced-Roll, etc)!
 function resetGame() {
     for (let dice of dices)
         dice.classList.remove("highlight");
@@ -44,6 +48,7 @@ function resetGame() {
     playersTurn = true;
     playerMovesRight = true;
     computerMovesRight = true;
+    gameReversed = false;
 
     player.classList.add("indicate-turn-first");
     computer.classList.remove("indicate-turn-second");
@@ -55,12 +60,11 @@ function resetGame() {
     message.classList.add("invisible");
 }
 
-function displayMessage(msg, time_duration = 3000, shadow_color = "white") {
+function displayMessage(msg, time_duration, shadow_color, font_color = "white") {
     // Prepare the Message Box UI
     message.innerText = msg;
     message.style.backgroundColor = shadow_color;
-    if (shadow_color === "white")
-        message.style.color = "black";
+    message.style.color = font_color;
     container.style.boxShadow = '0px 0px 100px 50px ' + shadow_color + ' inset';
 
     // Make visible and then invisible again
@@ -69,7 +73,6 @@ function displayMessage(msg, time_duration = 3000, shadow_color = "white") {
         message.classList.add("invisible");
         container.style.boxShadow = "none";
     }, time_duration);
-
 }
 
 function playSound(sound_source, time_duration = 3000) {
@@ -132,6 +135,10 @@ selectBoard.addEventListener("change", () => {
     boardChanged = true;
 });
 
+selectMode.addEventListener("change", () => {
+    modeChanged = true;
+});
+
 volumeSlider.addEventListener('input', function () {
     backgroundMusic.volume = this.value / 100;
 });
@@ -145,7 +152,9 @@ saveGameButton.addEventListener("click", () => {
     localStorage.setItem('playersY', getCoord(player)[1]);
     localStorage.setItem('computerX', getCoord(computer)[0]);
     localStorage.setItem('computerY', getCoord(computer)[1]);
-    displayMessage("The game has been SAVED!", 3000, "blue");
+    localStorage.setItem('modeIndex', modeIndex);
+    localStorage.setItem('gameReversed',gameReversed);
+    displayMessage("The game has been SAVED!", 3000, "blue", "white");
 });
 
 loadGameButton.addEventListener("click", () => {
@@ -153,9 +162,13 @@ loadGameButton.addEventListener("click", () => {
     playerMovesRight = localStorage.getItem('playerMovesRight') === 'true';
     computerMovesRight = localStorage.getItem('computerMovesRight') === 'true';
     boardIndex = parseInt(localStorage.getItem('boardIndex'), 10);
+    selectBoard.selectedIndex = boardIndex;
+    modeIndex = parseInt(localStorage.getItem('modeIndex'), 10);
+    selectMode.selectedIndex = modeIndex;
+    gameReversed = localStorage.getItem('gameReversed') === 'true'; //Useful for mixed-mode
+
     game.style.backgroundImage = `url("Resources/Board/Board-${boardIndex + 1}.jpg")`;
     boardImage.src = `Resources/Board/Board-${boardIndex + 1}.jpg`;
-    selectBoard.selectedIndex = boardIndex;
 
     const playersX = parseInt(localStorage.getItem('playersX'), 10);
     const playersY = parseInt(localStorage.getItem('playersY'), 10);
@@ -163,21 +176,32 @@ loadGameButton.addEventListener("click", () => {
     const computerY = parseInt(localStorage.getItem('computerY'), 10);
     setNewCoordinates(player, playersX, playersY);
     setNewCoordinates(computer, computerX, computerY);
+
+    // Setting the tokens:
     if (playersX == computerX && playersY == computerY)
         player.classList.add("overlap");
     else
         player.classList.remove("overlap");
-    if(playersTurn)
-    {
+
+    if (playersTurn) {
         player.classList.add("indicate-turn-first");
         computer.classList.remove("indicate-turn-second");
     }
-    else
-    {
+    else {
         player.classList.remove("indicate-turn-first");
         computer.classList.add("indicate-turn-second");
     }
-    displayMessage("The game has been LOADED!", 3000, "darkgreen")
+    if (modeIndex === 0)
+        displayMessage("The game has been LOADED in CLASSIC!", 4000, "white", "black");
+    else if (modeIndex === 1)
+        displayMessage("The game has been LOADED in REVERSED!", 4000, "purple", "white");
+    else
+        displayMessage("The game has been LOADED in MIXED!", 4000, "darkorange", "black");
+    modeChanged = false; //Because on loading we don't want to reset otherwise no worth in it!
+});
+
+forcedRollCheckbox.addEventListener("click", () => {
+    diceForcedOptions.classList.toggle("invisible");
 });
 
 resetButton.addEventListener("click", () => {
@@ -185,20 +209,42 @@ resetButton.addEventListener("click", () => {
     resetGame();
 });
 
-saveButton.addEventListener("click", () => {
-    if (boardChanged) {
+saveSettingsButton.addEventListener("click", () => {
+
+    if (boardChanged || modeChanged) {
         resetGame();
         boardChanged = false;
     }
     boardIndex = parseInt(selectBoard.value.at(-1)) - 1;
+    modeIndex = selectMode.selectedIndex;
+
     game.style.backgroundImage = `url(Resources/Board/${selectBoard.value}.jpg)`;
     settingsBox.classList.add("invisible");
     settingsBox.disabled = false;
+
+    // Mode-change message only when the mode is changed!
+    if (modeChanged) {
+        playSound("Resources/Sound/Notification.mp3", 3000);
+        if (modeIndex === 0) {
+            displayMessage("✅Everything is completely normal.", 3000, "white", "black");
+            gameReversed = false;
+        }
+        else if (modeIndex === 1) {
+            displayMessage("🌀Everything is twisted. Let the chaos begin!", 3000, "purple", "white");
+            gameReversed = true;
+        }
+        else if (modeIndex === 2) {
+            displayMessage("❓For now, everything 'seems' normal!", 3000, "darkorange", "black");
+            gameReversed = false;
+        }
+        modeChanged = false;
+    }
 });
 
 // ********************************************* Rolling region **************************************************
 rollButton.addEventListener("click", () => {
     rollButton.disabled = true; // disable rollButton during roll
+    resetButton.disabled = true; // disable resetButton during roll
     let delay_ms = 75; // delay_ms between steps in ms
     let forced = forcedRollCheckbox.checked;
     let value1 = parseInt(diceNumberInput1.value);
@@ -233,54 +279,98 @@ rollButton.addEventListener("click", () => {
 
         /*                    Movements:                     */
         // Incremental movements:
-        if (overLap()) {
-            player.classList.remove("overlap");
-        }
+        if (overLap()) player.classList.remove("overlap");
+
         let ele = (playersTurn) ? player : computer;
         let old = (playersTurn) ? playerOld : computerOld;
         let [row, col] = getCoord(ele);
-        setNewCoordinates(old, row, col); // Moving the shadow to new location
+        setNewCoordinates(old, row, col); // Moving the shadow to current location
         if ((row !== 1) || (row === 1 && (col - (diceValueMinus1 + 1) > 0))) {
             for (let move = 0; move < diceValueMinus1 + 1; move++)
                 setTimeout(playersTurn ? movePlayerByOne : moveComputerByOne, move * delay_ms * 2);
         }
-        // Snake or Ladder movements:
+
         setTimeout(() => {
             let [currRow, currCol] = getCoord(ele);
             let key = `${currRow},${currCol}`;
+            let newCoord;
 
-            // Ladder:
-            let newCoord = ladderMap[boardIndex].get(key);
-            if (newCoord !== undefined) {
-                setNewCoordinates(ele, newCoord.row, newCoord.col);
-                if (playersTurn)
-                    (newCoord.row & 1) ? (playerMovesRight = false) : (playerMovesRight = true);
-                else
-                    (newCoord.row & 1) ? (computerMovesRight = false) : (computerMovesRight = true);
-                playSound("Resources/Sound/Ladder.mp3", 3000);
-                displayMessage("Took the ladder!", 3000, "green");
-
+            // If mixed mode:
+            if (modeIndex === 2) {
+                if (Math.random() < 0.1) {
+                    playSound("Resources/Sound/Notification.mp3", 3000);
+                    if (!gameReversed) {
+                        displayMessage("🌀Suddenly, everything is twisted. Let the chaos begin!", 3000, "purple", "white");
+                        gameReversed = true;
+                    }
+                    else {
+                        displayMessage("✅Suddenly, everything is reverted-back to normal!", 3000, "white", "black");
+                        gameReversed = false;
+                    }
+                    console.log(`gameReverse: ${gameReversed}`);
+                }
             }
 
-            // Snake:
-            newCoord = snakeMap[boardIndex].get(key);
-            if (newCoord !== undefined) {
-                setNewCoordinates(ele, newCoord.row, newCoord.col);
-                if (playersTurn)
-                    (newCoord.row & 1) ? (playerMovesRight = false) : (playerMovesRight = true);
-                else
-                    (newCoord.row & 1) ? (computerMovesRight = false) : (computerMovesRight = true);
-                playSound("Resources/Sound/Snake.mp3", 3000);
-                displayMessage("Eaten by the snake!", 3000, "red");
+            // Snake or Ladder movements:
+            switch (gameReversed) {
+                case false:
+                    // Ladder:
+                    newCoord = ladderMap[boardIndex].get(key);
+                    if (newCoord !== undefined) {
+                        setNewCoordinates(ele, newCoord.row, newCoord.col);
+                        if (playersTurn)
+                            (newCoord.row & 1) ? (playerMovesRight = false) : (playerMovesRight = true);
+                        else
+                            (newCoord.row & 1) ? (computerMovesRight = false) : (computerMovesRight = true);
+                        playSound("Resources/Sound/Ladder.mp3", 3000);
+                        displayMessage("Climbed-up the ladder!", 3000, "green");
+                    }
+
+                    // Snake:
+                    newCoord = snakeMap[boardIndex].get(key);
+                    if (newCoord !== undefined) {
+                        setNewCoordinates(ele, newCoord.row, newCoord.col);
+                        if (playersTurn)
+                            (newCoord.row & 1) ? (playerMovesRight = false) : (playerMovesRight = true);
+                        else
+                            (newCoord.row & 1) ? (computerMovesRight = false) : (computerMovesRight = true);
+                        playSound("Resources/Sound/Snake.mp3", 3000);
+                        displayMessage("Eaten by the snake!", 3000, "red");
+                    }
+                    break;
+                case true:
+                    // Ladder:
+                    newCoord = ladderMapReversed[boardIndex].get(key);
+                    if (newCoord !== undefined) {
+                        setNewCoordinates(ele, newCoord.row, newCoord.col);
+                        if (playersTurn)
+                            (newCoord.row & 1) ? (playerMovesRight = false) : (playerMovesRight = true);
+                        else
+                            (newCoord.row & 1) ? (computerMovesRight = false) : (computerMovesRight = true);
+                        playSound("Resources/Sound/Ladder.mp3", 3000);
+                        displayMessage("Tripped down the ladder!", 3000, "red");
+                    }
+
+                    // Snake:
+                    newCoord = snakeMapReversed[boardIndex].get(key);
+                    if (newCoord !== undefined) {
+                        setNewCoordinates(ele, newCoord.row, newCoord.col);
+                        if (playersTurn)
+                            (newCoord.row & 1) ? (playerMovesRight = false) : (playerMovesRight = true);
+                        else
+                            (newCoord.row & 1) ? (computerMovesRight = false) : (computerMovesRight = true);
+                        playSound("Resources/Sound/Snake.mp3", 3000);
+                        displayMessage("Wait, the snake helped!?", 3000, "green");
+                    }
+                    break;
             }
 
             // If overlapping now
-            if (overLap()) {
-                player.classList.add("overlap");
-            }
+            if (overLap()) player.classList.add("overlap");
+
             // Checking if the current player won:
             if (getCoord(ele)[0] === 1 && getCoord(ele)[1] === 1) {
-                displayMessage(`${playersTurn ? 'Player 1' : 'Player 2'} won!`, 5000);
+                displayMessage(`${playersTurn ? 'Player 1' : 'Player 2'} won!`, 6000, "yellow", "black");
                 backgroundMusic.pause();
                 backgroundMusic.currentTime = 0;
                 playSound("Resources/Sound/Victory.wav");
@@ -290,13 +380,15 @@ rollButton.addEventListener("click", () => {
                     rollButton.disabled = false;
                 }, 5000);
             }
+
             playersTurn = !playersTurn;
             setTimeout(() => {
                 player.classList.toggle("indicate-turn-first");
                 computer.classList.toggle("indicate-turn-second");
-            }, 300);
+            }, 250);
+            resetButton.disabled = false;   // Enabling the resetButton only after the animation ends 
+            rollButton.disabled = false;    // Enabling the rollButton only after the animation ends   
 
-            rollButton.disabled = false;    // Enabling the rollButton only after the animation ends            
         }, (diceValueMinus1 + 1) * delay_ms * 2);
     }, offset * delay_ms);
 });

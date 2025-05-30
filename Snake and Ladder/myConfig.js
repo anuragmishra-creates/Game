@@ -1,5 +1,7 @@
 export const snakeMap = [new Map(), new Map(), new Map(), new Map()];
 export const ladderMap = [new Map(), new Map(), new Map(), new Map()];
+export const snakeMapReversed = [new Map(), new Map(), new Map(), new Map()];
+export const ladderMapReversed = [new Map(), new Map(), new Map(), new Map()];
 
 // Board 1:
 snakeMap[0].set("8,10", { row: 10, col: 7 });
@@ -67,3 +69,70 @@ ladderMap[3].set("8,5", { row: 5, col: 7 });
 ladderMap[3].set("8,8", { row: 5, col: 10 });
 ladderMap[3].set("9,3", { row: 7, col: 4 });
 ladderMap[3].set("10,9", { row: 8, col: 7 });
+
+// Board 1:
+snakeMapReversed[0].set("10,7", { row: 8, col: 10 });
+snakeMapReversed[0].set("9,8", { row: 6, col: 7 });
+snakeMapReversed[0].set("9,2", { row: 5, col: 5 });
+snakeMapReversed[0].set("5,10", { row: 3, col: 8 });
+snakeMapReversed[0].set("6,2", { row: 2, col: 2 });
+snakeMapReversed[0].set("3,6", { row: 1, col: 9 });
+snakeMapReversed[0].set("5,6", { row: 1, col: 3 });
+
+ladderMapReversed[0].set("8,5", { row: 10, col: 4 });
+ladderMapReversed[0].set("7,2", { row: 8, col: 1 });
+ladderMapReversed[0].set("4,7", { row: 8, col: 6 });
+ladderMapReversed[0].set("3,5", { row: 6, col: 3 });
+ladderMapReversed[0].set("3,1", { row: 5, col: 2 });
+ladderMapReversed[0].set("2,9", { row: 3, col: 10 });
+
+// Board 2:
+snakeMapReversed[1].set("10,10", { row: 8, col: 8 });
+snakeMapReversed[1].set("10,3", { row: 7, col: 4 });
+snakeMapReversed[1].set("9,5", { row: 6, col: 8 });
+snakeMapReversed[1].set("7,9", { row: 3, col: 6 });
+snakeMapReversed[1].set("3,10", { row: 1, col: 7 });
+snakeMapReversed[1].set("6,2", { row: 1, col: 5 });
+
+ladderMapReversed[1].set("5,5", { row: 10, col: 4 });
+ladderMapReversed[1].set("6,10", { row: 9, col: 9 });
+ladderMapReversed[1].set("5,6", { row: 9, col: 7 });
+ladderMapReversed[1].set("5,3", { row: 8, col: 2 });
+ladderMapReversed[1].set("3,2", { row: 6, col: 1 });
+ladderMapReversed[1].set("2,8", { row: 5, col: 7 });
+
+// Board 3:
+snakeMapReversed[2].set("10,3", { row: 7, col: 1 });
+snakeMapReversed[2].set("6,1", { row: 1, col: 2 });
+snakeMapReversed[2].set("9,3", { row: 6, col: 3 });
+snakeMapReversed[2].set("3,4", { row: 1, col: 6 });
+snakeMapReversed[2].set("6,5", { row: 4, col: 6 });
+snakeMapReversed[2].set("7,10", { row: 5, col: 7 });
+snakeMapReversed[2].set("5,8", { row: 2, col: 9 });
+snakeMapReversed[2].set("10,5", { row: 8, col: 7 });
+
+ladderMapReversed[2].set("8,5", { row: 10, col: 4 });
+ladderMapReversed[2].set("6,6", { row: 9, col: 8 });
+ladderMapReversed[2].set("4,9", { row: 6, col: 10 });
+ladderMapReversed[2].set("2,1", { row: 4, col: 2 });
+ladderMapReversed[2].set("1,9", { row: 3, col: 7 });
+ladderMapReversed[2].set("4,3", { row: 6, col: 2 });
+
+// Board 4:
+snakeMapReversed[3].set("10,7", { row: 9, col: 5 });
+snakeMapReversed[3].set("8,10", { row: 4, col: 7 });
+snakeMapReversed[3].set("4,9", { row: 1, col: 8 });
+snakeMapReversed[3].set("3,6", { row: 1, col: 6 });
+snakeMapReversed[3].set("3,4", { row: 1, col: 2 });
+snakeMapReversed[3].set("8,4", { row: 2, col: 7 });
+snakeMapReversed[3].set("9,2", { row: 4, col: 3 });
+snakeMapReversed[3].set("9,4", { row: 5, col: 2 });
+
+ladderMapReversed[3].set("1,1", { row: 3, col: 2 });
+ladderMapReversed[3].set("1,4", { row: 3, col: 5 });
+ladderMapReversed[3].set("2,8", { row: 4, col: 8 });
+ladderMapReversed[3].set("4,4", { row: 5, col: 5 });
+ladderMapReversed[3].set("5,7", { row: 8, col: 5 });
+ladderMapReversed[3].set("5,10", { row: 8, col: 8 });
+ladderMapReversed[3].set("7,4", { row: 9, col: 3 });
+ladderMapReversed[3].set("8,7", { row: 10, col: 9 });

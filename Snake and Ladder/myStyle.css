@@ -45,9 +45,9 @@ footer {
     color: white;
     text-align: center;
     height: 2em;
-    width: 30%;
+    width: 55%;
     background-color: #03045e;
-    font-size: 1.5rem;
+    font-size: clamp(0.4rem, 5vw, 1.5rem);
     opacity: 0.8;
     border: 2px solid black;
     border-radius: 2rem;
@@ -135,18 +135,22 @@ footer {
     border: 6px solid #a52a2a;
 }
 
-#save-game-button
-{
+input[type=checkbox] {
+    transform: scale(1.8);
+}
+
+#save-game-button {
     background-color: blue;
     color: white;
     border-radius: 0.5rem;
 }
-#load-game-button
-{
+
+#load-game-button {
     background-color: green;
     color: white;
     border-radius: 0.5rem;
 }
+
 #save-button {
     font-size: 0.8rem;
     height: 70%;
@@ -254,7 +258,8 @@ footer {
     filter: brightness(1.0);
 }
 
-.rolling-region button, .settings-box > button {
+.rolling-region button,
+.settings-box>button {
     align-self: center;
     justify-self: center;
 }
@@ -286,32 +291,33 @@ button:hover {
     grid-column: 3/4;
 }
 
+/* Tokens */
 .player,
 .computer {
     position: relative;
     align-self: center;
     justify-self: center;
-    height: 110%;
-    width: 110%;
+    height: 100%;
+    width: 100%;
     background-size: cover;
     background-position: center;
     border: 2px solid black;
-    transition: transform 0.5s ease-in-out 0s;  
+    transition: transform 0.5s ease-in-out 0s;
 }
+
 .player:hover,
-.computer:hover
-{
-    transform: scale(1.8);
+.computer:hover {
+    transform: scale(1.5);
 }
-.indicate-turn-first
-{
+
+.indicate-turn-first {
+    z-index: 10;
     box-shadow: 0px 0px 6px 6px green;
-    z-index: 15;
 }
-.indicate-turn-second
-{
+
+.indicate-turn-second {
+    z-index: 10;
     box-shadow: 0px 0px 6px 6px purple;
-    z-index: 15;
 }
 
 .player {
@@ -343,7 +349,7 @@ button:hover {
 }
 
 .computer-old {
-    background-color: blue;
+    background-color: purple;
 }
 
 @media only screen and (max-width: 1500px) {
