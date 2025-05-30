@@ -11,8 +11,9 @@
 
     <header>Snake-Ladder Game</header>
     <div id="settings-button"></div>
-
+    
     <div class="container">
+      <div class="message invisible">/Empty\</div>
       <!-- Settings Menu -->
       <div class="settings-box">
         <h2>Settings Menu</h2>
@@ -63,6 +64,10 @@
             max="100"
             value="100"
           />
+          <br/>
+          Save or Load game:
+          <button id="save-game-button"> SAVE </button>
+          <button id="load-game-button"> LOAD </button>
         </div>
 
         <button id="save-button">SAVE</button>
@@ -71,9 +76,8 @@
       <!-- Board region-->
       <div class="board-region">
         <div class="game">
-          <div class="message invisible">/Empty\</div>
           <div
-            class="player overlap"
+            class="player overlap indicate-turn-first"
             style="
               grid-row-start: 10;
               grid-row-end: 11;
