@@ -300,7 +300,7 @@ resetButton.addEventListener("click", () => {
 saveSettingsButton.addEventListener("click", () => {
 
     if (modeChanged || boardChanged) {
-        resetButton();
+        resetGame();
     }
     boardIndex = selectBoard.selectedIndex;
     modeIndex = selectMode.selectedIndex;
