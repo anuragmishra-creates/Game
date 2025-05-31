@@ -37,7 +37,7 @@ footer {
 
 .message {
     position: relative;
-    z-index: 9999;
+    z-index: 9998;
     grid-row: 1/11;
     grid-column: 1/11;
     align-self: center;
@@ -48,11 +48,30 @@ footer {
     width: 55%;
     background-color: #03045e;
     font-size: clamp(0.4rem, 5vw, 1.5rem);
-    opacity: 0.8;
+    opacity: 0.90;
     border: 2px solid black;
     border-radius: 2rem;
 }
 
+.alert-message
+{
+    position: relative;
+    z-index: 9999;
+    grid-row: 1/11;
+    grid-column: 1/11;
+    align-self: center;
+    justify-self: center;
+    color: white;
+    text-align: center;
+    height: 30%;
+    width: 55%;
+    background-color: #03045e;
+    font-size: clamp(0.4rem, 5vw, 1.5rem);
+    opacity: 0.90;
+    border: 2px solid black;
+    border-radius: 2rem;
+    box-shadow: 0px 0px 10px 5px black;
+}
 /* .message-background {
     display: none;
     position: absolute;
@@ -86,7 +105,7 @@ footer {
 
 .settings-box {
     position: relative;
-    z-index: 9998;
+    z-index: 9997;
     grid-row: 1/4;
     grid-column: 1/4;
     align-self: center;
@@ -268,7 +287,7 @@ button {
     font-size: 1rem;
     font-weight: 700;
     border: 2px solid black;
-    border-radius: 2rem;
+    border-radius: 0.5rem;
     height: 35px;
     width: 60px;
 }
