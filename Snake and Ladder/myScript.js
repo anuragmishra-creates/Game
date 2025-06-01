@@ -27,6 +27,8 @@ let diceNumberInput1 = document.querySelector('#dice-number-1-forced');
 let diceNumberInput2 = document.querySelector('#dice-number-2-forced');
 let saveGameButton = document.querySelector("#save-game-button");
 let loadGameButton = document.querySelector("#load-game-button");
+let clearGameButton= document.querySelector("#clear-game-button");
+
 // Credits box:
 let creditsBox = document.querySelector(".credits-box");
 let openCreditsButton = document.querySelector("#credits-button");
@@ -66,7 +68,7 @@ function resetGame() {
         gameReversed = false;
     else //Utmost necessary in Mixed-mode
         gameReversed = true;
-        
+
     backgroundMusic.currentTime = 0;
     player.classList.add("indicate-turn-first");
     computer.classList.remove("indicate-turn-second");
@@ -132,7 +134,7 @@ function setCoordinates(ele, newRow, newCol) {
 }
 
 // This function checks if the player is moving right or left based on the row number
-function movesRight(ele) {    
+function movesRight(ele) {
     let [row, col] = getCoordinates(ele);
     return ((row & 1) ? false : true);
 }
@@ -248,25 +250,45 @@ saveGameButton.addEventListener("click", () => {
     localStorage.setItem('computerY', getCoordinates(computer)[1]);
     localStorage.setItem('modeIndex', modeIndex);
     localStorage.setItem('gameReversed', gameReversed);
-    displayMessage("The game has been SAVED!", 3000, "blue", "white");
+    // gameReversed is useful for determining the current state of the mixed-mode
+    displayAlertMessage("The game has been SAVED!", 3000, "blue", "white");
 });
 
 loadGameButton.addEventListener("click", () => {
-    playersTurn = localStorage.getItem('playersTurn') === 'true';
-    boardIndex = parseInt(localStorage.getItem('boardIndex'), 10);
-    selectBoard.selectedIndex = boardIndex;
-    modeIndex = parseInt(localStorage.getItem('modeIndex'), 10);
-    selectMode.selectedIndex = modeIndex;
-    gameReversed = localStorage.getItem('gameReversed') === 'true';
-    // gameReversed is useful for determining the current state of the mixed-mode
 
+    //Checking if any save is there in the first place:
+    if (localStorage.getItem('playersTurn') === null) {
+        displayAlertMessage("NO saved game found!", 4000, "red", "white");
+        return;
+    }
+
+    // Retrieving if there is a save file:
+    let playersTurnStored = (localStorage.getItem('playersTurn') === 'true');
+    let boardIndexStored = parseInt(localStorage.getItem('boardIndex'), 10);
+    let modeIndexStored = parseInt(localStorage.getItem('modeIndex'), 10);
+    let gameReversedStored = (localStorage.getItem('gameReversed') === 'true');
+    let playersX = parseInt(localStorage.getItem('playersX'), 10);
+    let playersY = parseInt(localStorage.getItem('playersY'), 10);
+    let computerX = parseInt(localStorage.getItem('computerX'), 10);
+    let computerY = parseInt(localStorage.getItem('computerY'), 10);
+
+    // Checking if any data is missing (i.e., if file is corrupted)
+    for (let dataRetrieved of [playersTurnStored, boardIndexStored, modeIndexStored, gameReversedStored, playersX, playersY, computerX, computerY]) {
+        if (dataRetrieved === null || dataRetrieved === undefined || Number.isNaN(dataRetrieved)) {
+            displayAlertMessage("The game CANNOT be loaded because it is corrupted!", 4000, "red", "white");
+            return;
+        }
+    }
+
+    // Updating if no issues found in the loaded data:
+    playersTurn = playersTurnStored;
+    boardIndex = boardIndexStored;
+    modeIndex = modeIndexStored;
+    gameReversed = gameReversedStored;
+    selectBoard.selectedIndex = boardIndex;
+    selectMode.selectedIndex = modeIndex;
     game.style.backgroundImage = `url("Resources/Board/Board-${boardIndex + 1}.jpg")`;
     boardImage.src = `Resources/Board/Board-${boardIndex + 1}.jpg`;
-
-    const playersX = parseInt(localStorage.getItem('playersX'), 10);
-    const playersY = parseInt(localStorage.getItem('playersY'), 10);
-    const computerX = parseInt(localStorage.getItem('computerX'), 10);
-    const computerY = parseInt(localStorage.getItem('computerY'), 10);
     setCoordinates(player, playersX, playersY);
     setCoordinates(computer, computerX, computerY);
     setCoordinates(playerOld, playersX, playersY);
@@ -293,6 +315,17 @@ loadGameButton.addEventListener("click", () => {
     else
         displayAlertMessage(`The game has been LOADED in MIXED: ${gameReversed ? 'Reversed' : 'Normal'}!`, 4000, "darkorange", "black");
     modeChanged = false; //Because on loading we don't want to force-reset otherwise no worth in it!
+});
+
+clearGameButton.addEventListener("click",()=>
+{
+    displayAlertMessage("⚠️ Warning! Double click to DELETE the stored save file!", 4000, "red", "white");
+});
+
+clearGameButton.addEventListener("dblclick",()=>
+{
+    localStorage.clear();
+    displayAlertMessage("The game has been CLEARED!", 4000, "red", "white");
 });
 
 forcedRollCheckbox.addEventListener("click", () => {

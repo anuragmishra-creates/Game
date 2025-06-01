@@ -275,8 +275,8 @@ button:hover {
     grid-template-rows: 2fr 10fr 2fr;
     grid-template-columns: 10fr 10fr;
     gap: 5px;
-    height: 50vh;
-    width: 50vw;
+    height: 60vh;
+    width: 60vw;
     /*     background-color: rgba(255,255,255,0.05); */
     background-image: url(Resources/Background/Background2.jpg);
     background-size: cover;
@@ -295,7 +295,7 @@ button:hover {
     text-decoration: underline;
 }
 
-.save-load-panel {
+.save-load-clear-panel {
     grid-row: 1/2;
     grid-column: 2/3;
     align-self: center;
@@ -316,6 +316,13 @@ button:hover {
 
 #load-game-button {
     background-color: green;
+    color: white;
+    border-radius: 0.5rem;
+}
+
+#clear-game-button
+{
+    background-color: red;
     color: white;
     border-radius: 0.5rem;
 }
@@ -593,12 +600,12 @@ input[type=checkbox] {
 
     .settings-box {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 0.5fr 5fr 5fr 1fr;
+        grid-template-rows: 1fr 1fr 5fr 5fr 1fr;
         height: 80vh;
         width: 60vw;
     }
 
-    .save-load-panel {
+    .save-load-clear-panel {
         grid-column: 1/2;
         grid-row: 2/3;
         width: 90%;
