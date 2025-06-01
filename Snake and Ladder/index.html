@@ -8,19 +8,168 @@
     <link rel="icon" type="image/x-icon" href="./Resources/favicon-32x32.png" />
   </head>
   <body>
-    <audio id="special-effects-audio"></audio>
+    <!-- HEADER -->
+    <header>Snake & Ladder Game</header>
+
     <div id="settings-button"></div>
-
-    <header>Snake-Ladder Game</header>
-
     <div class="container">
+      <!-- Messages, alerts and pop-ups-->
       <div class="message invisible">/Empty\</div>
-      <div class="alert-message invisible"> 
-        <h2> Alert Message! </h2>
+      <div class="alert-message invisible">/Empty\</div>
+      <div class="info-box">
+        <h2>🎲 How to Play Snake & Ladder</h2>
+        <p>
+          Snake and Ladder is a simple board game traditionally played between 2
+          or more players. The goal is to race your token from square 1 to 100.
+          On your turn, roll the dice and move forward the number of spaces
+          shown.
+        </p>
+        <p>
+          <strong>🎯 Land on a ladder?</strong> You'll instantly climb to the
+          top of it!<br />
+          <strong>🐍 Land on a snake?</strong> It'll slide you down to its
+          tail!<br />
+          First to reach square 100 wins!
+        </p>
+
+        <h3>🧩 Game Features in This Version</h3>
+        <ul>
+          <li>
+            🎨 <strong>Board Selection:</strong> Choose from multiple
+            beautifully designed boards (not customizable).
+          </li>
+          <li>
+            ⚙️ <strong>Game Modes:</strong> Every board can be played in three
+            unique modes:
+            <ul>
+              <li>
+                ✅ <strong>Classic Mode:</strong> Snakes <em>pull</em> you down,
+                ladders <em>lift</em> you up — the traditional way!
+              </li>
+              <li>
+                🌀 <strong>Reversed Mode:</strong> Snakes <em>help</em> you up
+                from their tails, and ladders <em>trip</em> you down — expect
+                the unexpected!
+              </li>
+              <li>
+                ❓ <strong>Mixed Mode:</strong> Snakes and ladders randomly
+                change behavior like the weather! You'll get alerts when they
+                switch roles.
+              </li>
+            </ul>
+          </li>
+          <li>
+            🎲 <strong>Forced Dice Rolls:</strong> You can optionally activate a
+            mode to <em>manually</em> set the dice value for each player.
+            Perfect for playful cheating, testing strategies, or just reliving
+            that childhood dream of always rolling sixes!
+          </li>
+          <li>
+            💾 <strong>Save & Load:</strong> Your game progress can be easily
+            saved locally in your browser by using the <em>Save</em> button.
+            Come back later and pick up right where you left off by using the
+            <em>Load</em> button. Both of these buttons are present on the
+            top-right panel in the Settings menu.
+          </li>
+        </ul>
+        <h3>📌 Notes</h3>
+        <ul>
+          <li>
+            This game is meant for casual play and fun — not for serious
+            competition!
+          </li>
+          <li>
+            Some visuals and sounds are used from various online sources and
+            credited in the "Credits" section.
+          </li>
+        </ul>
+        <br/>
+        <p>
+          Good luck — and may your dice always roll the way you want (unless
+          it's someone else's turn 😄)! <br />🎲🐍🪜<br />
+          — <em>The Developer (Anurag Mishra)</em>
+        </p>
+        <button id="close-info-button">Close</button>
       </div>
+
+      <div class="credits-box invisible">
+        <h2>🎮 Game Credits</h2>
+        <div class="credits-container">
+          <div class="credit-card">
+            <h3>🎵 Music & Sound</h3>
+            <p>
+              Background music and sound effects are from
+              <a href="https://pixabay.com/music/" target="_blank">Pixabay</a>,
+              under their royalty-free license. Attribution is not required, but
+              provided out of respect.
+            </p>
+            <p>
+              Additional music is sourced from
+              <a href="https://uppbeat.io" target="_blank">Uppbeat.io</a>, used
+              under the free-use license with proper attribution where needed.
+            </p>
+            <p>
+              All tracks are used for non-commercial, educational and
+              entertainment purposes only.
+            </p>
+          </div>
+
+          <div class="credit-card">
+            <h3>🖼️ Board Design</h3>
+            <p>
+              The Snake & Ladder board graphic was created by
+              <a href="https://www.freepik.com/author/madedirga" target="_blank"
+                >Made_Dirga</a
+              >
+              and downloaded from
+              <a href="https://www.freepik.com/" target="_blank">Freepik.com</a
+              >.
+            </p>
+            <p>
+              Licensed under Freepik's free-use terms for
+              personal/non-commercial projects with attribution.
+            </p>
+          </div>
+
+          <div class="credit-card">
+            <h3>🧍 Token & Background Art</h3>
+            <p>
+              Token and background visuals are illustrations from the anime
+              <em>The Apothecary Diaries</em>, written by Natsu Hyuuga and
+              illustrated by Touko Shino. The anime is produced by
+              <em>Toho Animation</em> and
+              <em>OLM (Oriental Light and Magic)</em> studios.
+            </p>
+            <p>
+              These are used respectfully as part of a non-commercial, fan-based
+              project. All rights belong to the original creators and studios.
+            </p>
+          </div>
+
+          <div class="credit-card">
+            <h3>📜 Licensing & Usage</h3>
+            <p>
+              This game is created for personal, educational, and entertainment
+              use only.
+            </p>
+            <p>
+              If you are the copyright holder of any asset and would like it
+              removed or credited differently, please reach out to the
+              developer.
+            </p>
+          </div>
+        </div>
+        <button id="close-credits-button">Close</button>
+      </div>
+
       <!-- Settings Menu -->
       <div class="settings-box">
         <h2>Settings Menu</h2>
+        <div class="save-load-panel">
+          Save or Load game:
+          <button id="save-game-button">SAVE</button>
+          <button id="load-game-button">LOAD</button>
+        </div>
         <div class="settings-1">
           <img id="board-preview" src="Resources/Board/Board-1.jpg" />
           <br />
@@ -30,6 +179,7 @@
             <option value="Board-2">Board-2</option>
             <option value="Board-3">Board-3</option>
             <option value="Board-4">Board-4</option>
+            <option value="Board-5">Board-5</option>
           </select>
         </div>
         <div class="settings-2">
@@ -39,8 +189,8 @@
             <option value="Reversed">Reversed</option>
             <option value="Mixed">Mixed</option>
           </select>
-          <br>
-          <br>
+          <br />
+          <br />
           <label for="volume">Volume:</label>
           <input
             type="range"
@@ -51,9 +201,6 @@
             value="100"
           />
           <br />
-          Save or Load game:
-          <button id="save-game-button">SAVE</button>
-          <button id="load-game-button">LOAD</button>
           <label>
             <br />
             Forced roll: <input type="checkbox" name="forcedRoll" /> </label
@@ -83,7 +230,11 @@
           </div>
         </div>
 
-        <button id="save-button">SAVE</button>
+        <div class="save-credits-info-panel">
+          <button id="save-button">SAVE</button>
+          <button id="credits-button">CREDITS</button>
+          <button id="info-button">INFO</button>
+        </div>
       </div>
 
       <!-- Board region-->

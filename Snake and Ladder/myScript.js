@@ -2,7 +2,6 @@ import { snakeMap, ladderMap, snakeMapReversed, ladderMapReversed } from "./myCo
 
 // Background effects:
 let backgroundMusic = new Audio("Resources/Sound/Background-Music.mp3");
-// let audio = document.querySelector("#special-effects-audio");
 let message = document.querySelector(".message");
 let alertMessage = document.querySelector(".alert-message");
 let container = document.querySelector(".container");
@@ -28,6 +27,14 @@ let diceNumberInput1 = document.querySelector('#dice-number-1-forced');
 let diceNumberInput2 = document.querySelector('#dice-number-2-forced');
 let saveGameButton = document.querySelector("#save-game-button");
 let loadGameButton = document.querySelector("#load-game-button");
+// Credits box:
+let creditsBox = document.querySelector(".credits-box");
+let openCreditsButton = document.querySelector("#credits-button");
+let closeCreditsButton = document.querySelector("#close-credits-button");
+// Info box:
+let infoBox = document.querySelector(".info-box");
+let openInfoButton = document.querySelector("#info-button");
+let closeInfoButton = document.querySelector("#close-info-button");
 
 // Tokens:
 let player = document.querySelector(".player");
@@ -59,7 +66,8 @@ function resetGame() {
         gameReversed = false;
     else //Utmost necessary in Mixed-mode
         gameReversed = true;
-
+        
+    backgroundMusic.currentTime = 0;
     player.classList.add("indicate-turn-first");
     computer.classList.remove("indicate-turn-second");
     player.classList.add("overlap");
@@ -89,7 +97,7 @@ function displayAlertMessage(msg, time_duration, shadow_color, font_color = "whi
     // Prepare the Message Box UI
     rollButton.disabled = true;
     resetButton.disabled = true;
-    alertMessage.innerHTML = `<h2> Alert Message! </h2> <br> ${msg}`;
+    alertMessage.innerHTML = `<h2> Alert Message! </h2> <p> ${msg} <p>`;
     alertMessage.style.backgroundColor = shadow_color;
     alertMessage.style.color = font_color;
     container.style.boxShadow = '0px 0px 100px 50px ' + shadow_color + ' inset';
@@ -123,9 +131,8 @@ function setCoordinates(ele, newRow, newCol) {
     ele.style.gridColumnEnd = newCol + 1;
 }
 
-function movesRight(ele) {
-    console.log('movesRight called');
-    // This function checks if the player is moving right or left based on the row number
+// This function checks if the player is moving right or left based on the row number
+function movesRight(ele) {    
     let [row, col] = getCoordinates(ele);
     return ((row & 1) ? false : true);
 }
@@ -293,7 +300,6 @@ forcedRollCheckbox.addEventListener("click", () => {
 });
 
 resetButton.addEventListener("click", () => {
-    backgroundMusic.currentTime = 0;
     resetGame();
 });
 
@@ -329,6 +335,23 @@ saveSettingsButton.addEventListener("click", () => {
         gameStarting = false;
     }
 });
+
+openCreditsButton.addEventListener("click", () => {
+    creditsBox.classList.remove("invisible");
+});
+
+closeCreditsButton.addEventListener("click", () => {
+    creditsBox.classList.add("invisible");
+});
+
+openInfoButton.addEventListener("click", () => {
+    infoBox.classList.remove("invisible");
+});
+
+closeInfoButton.addEventListener("click", () => {
+    infoBox.classList.add("invisible");
+});
+
 
 // ***************************************** Rolling region **********************************************
 function mainFunction() {
