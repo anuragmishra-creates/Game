@@ -28,6 +28,12 @@ This version of Snake & Ladder includes several gameplay and visual enhancements
   - 🌀 **Reversed Mode:** Snakes help you climb up from their tails, while ladders trip you down to the bottom!
   - ❓ **Mixed Mode:** Snakes and ladders randomly switch behaviors during the game — with alerts to keep you on your toes!
 
+- ⚙️ **Opponent Type**  
+  Every board can be played in one of two ways:
+
+  - **👤Player Vs Computer💻**
+  - **👤Player Vs Player👤**
+  
 - 🎲 **Forced Dice Rolls**  
   Enable this fun mode to **manually set dice values** for each player. Great for testing, playful cheating, or reliving that childhood dream of always rolling sixes!
 
@@ -38,7 +44,6 @@ This version of Snake & Ladder includes several gameplay and visual enhancements
 
 ## 🔮  Features to be added in the future updates
 
-- Choice to play against computer (for lonely people)
 - Timed challenge 
 - Hover info (about snake ladder and tokens, count of snakes and ladders encountered by a particular token).
 - Game stats at the end of each game
