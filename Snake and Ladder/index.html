@@ -13,6 +13,25 @@
 
     <div id="settings-button"></div>
     <div class="container">
+      <!-- Current Game Info -->
+      <div class="turn-info-box">
+        <div class="info-row">
+          <span class="info-label">Turn:</span>
+          <span class="info-value" id="turn-value">Player 1</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Mode:</span>
+          <span class="info-value" id="mode-value">Classic</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Players:</span> 
+          <span class="info-value" id="players-value">Player Vs Computer</span>
+        </div>
+        <div class="info-row" id="mixed-row" style="display: none">
+          <span class="info-label">Mixed State:</span>
+          <span class="info-value" id="mixed-value">Normal</span>
+        </div>
+      </div>
       <!-- Messages, alerts and pop-ups-->
       <div class="message invisible">/Empty\</div>
       <div class="alert-message invisible">/Empty\</div>
@@ -83,7 +102,7 @@
             credited in the "Credits" section.
           </li>
         </ul>
-        <br/>
+        <br />
         <p>
           Good luck — and may your dice always roll the way you want (unless
           it's someone else's turn 😄)! <br />🎲🐍🪜<br />
@@ -190,11 +209,11 @@
             <option value="Reversed">Reversed</option>
             <option value="Mixed">Mixed</option>
           </select>
-          <br/>
-          <br/>
+          <br />
+          <br />
           Choose players:
           <select id="select-players" name="players-selection">
-            <option value="1-Player-1-Computer"> 👤Player Vs Computer💻</option>
+            <option value="1-Player-1-Computer">👤Player Vs Computer💻</option>
             <option value="2-players">👤Player Vs Player👤</option>
           </select>
           <br />

@@ -84,6 +84,7 @@ function resetGame() {
     setCoordinates(playerOld, 10, 1);
     setCoordinates(computerOld, 10, 1);
     message.classList.add("invisible");
+    updateTurnInfoBox();
 }
 
 let messageTimeoutId = null;
@@ -171,6 +172,41 @@ function overLap() {
     if (getCoordinates(player)[0] == getCoordinates(computer)[0] && getCoordinates(player)[1] == getCoordinates(computer)[1])
         return true;
     return false;
+}
+
+function updateTurnInfoBox() {
+    const turnValue = document.getElementById("turn-value");
+    const modeValue = document.getElementById("mode-value");
+    const playersValue = document.getElementById("players-value");
+    const mixedRow = document.getElementById("mixed-row");
+    const mixedValue = document.getElementById("mixed-value");
+
+    // Turn
+    if (playersIndex === 0) {
+        turnValue.textContent = playersTurn ? "Player 1" : "Computer";
+    } else {
+        turnValue.textContent = playersTurn ? "Player 1" : "Player 2";
+    }
+
+    // Mode
+    if (modeIndex === 0) {
+        modeValue.textContent = "Classic";
+        modeValue.style.color = "white";
+        mixedRow.style.display = "none";
+    } else if (modeIndex === 1) {
+        modeValue.textContent = "Reversed";
+        modeValue.style.color = "purple";
+        mixedRow.style.display = "none";
+    } else if (modeIndex === 2) {
+        modeValue.textContent = "Mixed";
+        modeValue.style.color = "darkorange";
+        mixedRow.style.display = "";
+        mixedValue.textContent = gameReversed ? "Reversed" : "Normal";
+        mixedValue.style.color = gameReversed ? "#b5179e" : "#00ffae";
+    }
+
+    // Players
+    playersValue.textContent = playersIndex === 0 ? "Player Vs Computer" : "Player Vs Player";
 }
 
 function mixedModeRandomness(reversalProbability) {
@@ -343,6 +379,7 @@ loadGameButton.addEventListener("click", () => {
     else
         displayAlertMessage(`The game has been LOADED in MIXED: ${gameReversed ? 'Reversed' : 'Normal'}!`, 4000, "darkorange", "black");
     modeChanged = false; //Because on loading we don't want to force-reset otherwise no worth in it!
+    updateTurnInfoBox();
 });
 
 clearGameButton.addEventListener("click", () => {
@@ -377,6 +414,7 @@ saveSettingsButton.addEventListener("click", () => {
 
     // Mode-change message only when the mode and/or the board settings are changed!
     if (modeChanged || boardChanged || gameStarting) {
+
         playSound("Resources/Sound/Notification.mp3", 3000);
         if (modeIndex === 0) {
             displayAlertMessage("✅Everything is completely normal.", 3000, "white", "black");
@@ -394,6 +432,7 @@ saveSettingsButton.addEventListener("click", () => {
         boardChanged = false;
         gameStarting = false;
     }
+    updateTurnInfoBox();
 });
 
 openCreditsButton.addEventListener("click", () => {
@@ -483,7 +522,7 @@ function mainFunction(skipEnablingButtons = false) {
             winnerDecided = false;
             if (getCoordinates(ele)[0] === 1 && getCoordinates(ele)[1] === 1) {
                 winnerDecided = true;
-                displayMessage(`${playersTurn ? 'Player 1' : 'Player 2'} won!`, 6000, "yellow", "black");
+                displayMessage(`${playersTurn ? 'Player 1' : (playersIndex === 0 ? 'Computer' : 'Player 2')} won!`, 6000, "yellow", "black");
                 playSound("Resources/Sound/Victory.wav");
                 setTimeout(() => {
                     resetGame();
@@ -502,7 +541,7 @@ function mainFunction(skipEnablingButtons = false) {
                 resetButton.disabled = false;
                 rollButton.disabled = false;
             }
-
+            updateTurnInfoBox();
         }, (diceValueMinus1 + 1) * delay_ms * 2);
     }, offset * delay_ms);
 }
@@ -515,15 +554,28 @@ rollButton.addEventListener("click", () => {
     let totalAnimationTime = (offset * delay_ms) + ((diceValueMinus1 + 1) * delay_ms * 2);
     if (playersIndex == 0) {
         setTimeout(() => {
-            mainFunction(false);
+            if (!winnerDecided)
+                mainFunction(false);
         }, totalAnimationTime + 500);
-        // 1000 ms is the gap time
+        // 500 ms is the gap time
     }
 });
 
 document.addEventListener("keydown", (event) => {
     if (!rollButton.disabled) {
-        if ((playersTurn && event.code === 'ControlLeft') || (playersIndex === 1 && !playersTurn && event.code == 'ControlRight'))
-            mainFunction();
+        if ((playersTurn && event.code === 'ControlLeft') || (playersIndex === 1 && !playersTurn && event.code == 'ControlRight')) {
+            //enableSkip being true means that after the current roll is completed, we don't re-enable the rolling and reset buttons
+            let enableSkip = (playersIndex === 0) ? true : false;
+
+            mainFunction(enableSkip);
+            let totalAnimationTime = (offset * delay_ms) + ((diceValueMinus1 + 1) * delay_ms * 2);
+            if (playersIndex == 0) {
+                setTimeout(() => {
+                    if (!winnerDecided)
+                        mainFunction(false);
+                }, totalAnimationTime + 500);
+                // 500 ms is the gap time
+            }
+        }
     }
 });

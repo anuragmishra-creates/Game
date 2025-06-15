@@ -109,127 +109,127 @@ button:hover {
 
 /* Credits box styles */
 .credits-box {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
 
-  background-color: #03045e;
-  color: white;
-  padding: 2rem;
-  border-radius: 1.5rem;
-  border: 2px solid black;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-  width: 90%;
-  max-width: 95vw;
-  max-height: 90vh;
-  overflow: hidden;
-  font-family: 'Segoe UI', sans-serif;
-  text-align: center;
+    background-color: #03045e;
+    color: white;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    border: 2px solid black;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    width: 90%;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
 }
 
 .credits-box h2 {
-  margin-bottom: 1rem;
-  color: #90e0ef;
-  font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #90e0ef;
+    font-size: 1.8rem;
 }
 
 .credits-container {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 1rem 0;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 1rem 0;
 }
 
 .credit-card {
-  min-width: 250px;
-  max-width: 300px;
-  flex: 0 0 auto;
-  background-color: #023e8a;
-  border: 1px solid #0077b6;
-  border-radius: 1rem;
-  padding: 1rem;
-  scroll-snap-align: start;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  text-align: left;
+    min-width: 250px;
+    max-width: 300px;
+    flex: 0 0 auto;
+    background-color: #023e8a;
+    border: 1px solid #0077b6;
+    border-radius: 1rem;
+    padding: 1rem;
+    scroll-snap-align: start;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    text-align: left;
 }
 
 .credit-card h3 {
-  color: #ffd60a;
-  margin-bottom: 0.5rem;
+    color: #ffd60a;
+    margin-bottom: 0.5rem;
 }
 
 .credit-card p {
-  margin-bottom: 0.6rem;
-  font-size: 0.95rem;
-  line-height: 1.4;
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
 }
 
 .credit-card a {
-  color: #00d4ff;
-  text-decoration: underline;
+    color: #00d4ff;
+    text-decoration: underline;
 }
 
 .credit-card a:hover {
-  color: #90e0ef;
-  text-decoration: none;
+    color: #90e0ef;
+    text-decoration: none;
 }
 
 /* Info-box styles */
 .info-box {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  background-color: #1e1e2f;
-  color: white;
-  padding: 2rem;
-  border-radius: 1.5rem;
-  border: 2px solid #444;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
-  text-align: left;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: #1e1e2f;
+    color: white;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    border: 2px solid #444;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: left;
 }
 
 .info-box h2 {
-  color: #ffd60a;
-  text-align: center;
-  margin-bottom: 1rem;
+    color: #ffd60a;
+    text-align: center;
+    margin-bottom: 1rem;
 }
 
 .info-box h3 {
-  color: #90e0ef;
-  margin-top: 1.2rem;
+    color: #90e0ef;
+    margin-top: 1.2rem;
 }
 
 .info-box ul {
-  padding-left: 1.2rem;
-  margin-top: 0.5rem;
+    padding-left: 1.2rem;
+    margin-top: 0.5rem;
 }
 
 .info-box ul ul {
-  margin-top: 0.3rem;
+    margin-top: 0.3rem;
 }
 
 .info-box p {
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 .info-box em {
-  color: #adb5bd;
+    color: #adb5bd;
 }
 
 .info-box strong {
-  color: #ffba08;
+    color: #ffba08;
 }
 
 /* .message-background {
@@ -320,8 +320,7 @@ button:hover {
     border-radius: 0.5rem;
 }
 
-#clear-game-button
-{
+#clear-game-button {
     background-color: red;
     color: white;
     border-radius: 0.5rem;
@@ -352,14 +351,14 @@ input[type=checkbox] {
     transform: scale(1.5);
 }
 
-.dice-force-options
-{
+.dice-force-options {
     width: 90%;
     background-color: rgba(255, 255, 255, 0.08);
     background-blend-mode: lighten;
     border-radius: 0.5rem;
     text-align: center;
 }
+
 .save-credits-info-panel {
     grid-row: 3/4;
     grid-column: 1/3;
@@ -375,7 +374,10 @@ input[type=checkbox] {
     gap: 5px;
 }
 
-#save-button, #credits-button, #info-button, #close-credits-button {
+#save-button,
+#credits-button,
+#info-button,
+#close-credits-button {
     font-size: 0.8rem;
     height: 70%;
     aspect-ratio: 2/1;
@@ -562,6 +564,59 @@ input[type=checkbox] {
 }
 
 
+/* Turn & Game Mode Info Box */
+.turn-info-box {
+    grid-row: 1/2;
+    grid-column: 2/3;
+
+    overflow-y: auto;
+    z-index: 20;
+    background: #03045e;
+    color: white;
+    border-radius: 1.2rem;
+    border: 2px solid #90e0ef;
+    padding: 0.8rem 1rem;
+    width: 90%;
+    height: 100%;
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: box-shadow 0.2s;
+}
+
+.turn-info-box .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.turn-info-box .info-label {
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+    margin-right: 0.7em;
+}
+
+.turn-info-box .info-value {
+    font-weight: 700;
+    color: Red;
+    text-shadow: 0 1px 2px #0008;
+}
+
+.turn-info-box #mode-value {
+    color: white;
+}
+
+.turn-info-box #players-value {
+    color: #ffba08;
+}
+
+.turn-info-box #mixed-value {
+    color: #ff006e;
+}
+
 /* Media queries start */
 @media only screen and (max-width: 1500px) {
     .container {
@@ -569,7 +624,7 @@ input[type=checkbox] {
     }
 
     .rolling-region {
-        height: 60%;
+        height: 75%;
         width: 80%;
     }
 
@@ -581,21 +636,26 @@ input[type=checkbox] {
 @media only screen and (max-width: 1200px) {
     .container {
         grid-template-rows: 3fr 1fr;
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 
     .board-region {
         grid-row: 1/2;
-        grid-column: 1/2;
+        grid-column: 1/3;
         width: 80%;
     }
 
     .rolling-region {
-        width: 40%;
+        width: 80%;
         height: 100%;
         grid-template-rows: 0.5fr 1fr 1fr 1fr;
         grid-row: 2/3;
         grid-column: 1/2;
+    }
+
+    .turn-info-box {
+        grid-row: 2/3;
+        grid-column: 2/3;
     }
 
     .dice {
@@ -638,14 +698,15 @@ input[type=checkbox] {
 }
 
 @media only screen and (max-width: 900px) {
-    .board-region {
-        grid-row: 1/2;
-        grid-column: 1/2;
-        width: 95%;
+    .alert-message, .message
+    {
+        width: 90%;
     }
 
-    .rolling-region {
-        width: 50%;
+    .board-region {
+        grid-row: 1/2;
+        grid-column: 1/3;
+        width: 95%;
     }
 
     .settings-box {
@@ -655,16 +716,21 @@ input[type=checkbox] {
 }
 
 @media only screen and (max-width: 600px) {
-
     .settings-box {
         height: 60vh;
         width: 80vw;
     }
+
+    .rolling-region {
+        width: 100%;
+    }
 }
 
 @media only screen and (max-width: 550px) {
-    .rolling-region {
-        width: 70%;
+
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 200px auto 200px;
     }
 
     #settings-button {
@@ -672,6 +738,23 @@ input[type=checkbox] {
         height: 15vw;
         bottom: 20vh;
         right: 1vw;
+    }
+
+    .turn-info-box {
+        grid-row: 1/2;
+        grid-column: 1/2;
+    }
+
+    .board-region {
+        grid-row: 2/3;
+        grid-column: 1/2;
+    }
+
+    .rolling-region {
+        grid-row: 3/4;
+        grid-column: 1/2;
+        height: 100%;
+        width: 70%;
     }
 
     .settings-box {
