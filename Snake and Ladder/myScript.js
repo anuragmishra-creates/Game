@@ -20,6 +20,7 @@ let settingsBox = document.querySelector(".settings-box");
 let selectBoard = document.querySelector("#select-board");
 let boardImage = document.querySelector("#board-preview");
 let selectMode = document.querySelector("#select-mode");
+let selectPlayers = document.querySelector("#select-players");
 let volumeSlider = document.querySelector("#volume");
 let forcedRollCheckbox = document.querySelector('input[name="forcedRoll"]');
 let diceForcedOptions = document.querySelector(".dice-force-options");
@@ -27,7 +28,7 @@ let diceNumberInput1 = document.querySelector('#dice-number-1-forced');
 let diceNumberInput2 = document.querySelector('#dice-number-2-forced');
 let saveGameButton = document.querySelector("#save-game-button");
 let loadGameButton = document.querySelector("#load-game-button");
-let clearGameButton= document.querySelector("#clear-game-button");
+let clearGameButton = document.querySelector("#clear-game-button");
 
 // Credits box:
 let creditsBox = document.querySelector(".credits-box");
@@ -47,11 +48,16 @@ let computerOld = document.querySelector(".computer-old");
 // Dynamic variables' declaration and initializations:
 
 // Settings variables:
+let offset;
+let winnerDecided = false; // Used for determining when the roll and reset button should be enabled back
+let delay_ms = 75; // delay_ms between steps in ms
 let boardChanged = false;
 let modeChanged = false;
 let boardIndex = 0;
 let gameReversed = false;
 let modeIndex = 0;
+let playersIndex = 0; // The option corresponding to the PVP or PVC
+
 // Playing variables:
 let diceValueMinus1 = 0; //Ranges from 0 to 5
 let playersTurn = true;
@@ -80,6 +86,8 @@ function resetGame() {
     message.classList.add("invisible");
 }
 
+let messageTimeoutId = null;
+
 function displayMessage(msg, time_duration, shadow_color, font_color = "white") {
     // Prepare the Message Box UI
     message.innerText = msg;
@@ -87,14 +95,22 @@ function displayMessage(msg, time_duration, shadow_color, font_color = "white") 
     message.style.color = font_color;
     container.style.boxShadow = '0px 0px 100px 50px ' + shadow_color + ' inset';
 
+    // Clear any previous timeout to prevent hiding the new message too early
+    if (messageTimeoutId !== null) {
+        clearTimeout(messageTimeoutId);
+        messageTimeoutId = null;
+    }
+
     // Make visible and then invisible again
     message.classList.remove("invisible");
-    setTimeout(() => {
+    messageTimeoutId = setTimeout(() => {
         message.classList.add("invisible");
         container.style.boxShadow = "none";
+        messageTimeoutId = null;
     }, time_duration);
 }
 
+let alertMessageTimeoutId = null;
 function displayAlertMessage(msg, time_duration, shadow_color, font_color = "white") {
     // Prepare the Message Box UI
     rollButton.disabled = true;
@@ -104,15 +120,20 @@ function displayAlertMessage(msg, time_duration, shadow_color, font_color = "whi
     alertMessage.style.color = font_color;
     container.style.boxShadow = '0px 0px 100px 50px ' + shadow_color + ' inset';
 
+    // Clear any previous timeout to prevent hiding the new message too early
+    if (alertMessageTimeoutId !== null) {
+        clearTimeout(alertMessageTimeoutId);
+        alertMessageTimeoutId = null;
+    }
+
     // Make visible and then invisible again
     alertMessage.classList.remove("invisible");
-    setTimeout(() => {
+    alertMessageTimeoutId = setTimeout(() => {
         rollButton.disabled = false;
         resetButton.disabled = false;
-
-
         alertMessage.classList.add("invisible");
         container.style.boxShadow = "none";
+        alertMessageTimeoutId = null;
     }, time_duration);
 }
 
@@ -237,6 +258,9 @@ selectMode.addEventListener("change", () => {
     modeChanged = true;
 });
 
+selectPlayers.addEventListener("change", () => {
+    modeChanged = true;
+})
 volumeSlider.addEventListener('input', function () {
     backgroundMusic.volume = this.value / 100;
 });
@@ -249,6 +273,7 @@ saveGameButton.addEventListener("click", () => {
     localStorage.setItem('computerX', getCoordinates(computer)[0]);
     localStorage.setItem('computerY', getCoordinates(computer)[1]);
     localStorage.setItem('modeIndex', modeIndex);
+    localStorage.setItem('playersIndex', playersIndex);
     localStorage.setItem('gameReversed', gameReversed);
     // gameReversed is useful for determining the current state of the mixed-mode
     displayAlertMessage("The game has been SAVED!", 3000, "blue", "white");
@@ -258,7 +283,7 @@ loadGameButton.addEventListener("click", () => {
 
     //Checking if any save is there in the first place:
     if (localStorage.getItem('playersTurn') === null) {
-        displayAlertMessage("NO saved game found!", 4000, "red", "white");
+        displayAlertMessage("NO saved game found!", 3000, "red", "white");
         return;
     }
 
@@ -266,6 +291,7 @@ loadGameButton.addEventListener("click", () => {
     let playersTurnStored = (localStorage.getItem('playersTurn') === 'true');
     let boardIndexStored = parseInt(localStorage.getItem('boardIndex'), 10);
     let modeIndexStored = parseInt(localStorage.getItem('modeIndex'), 10);
+    let playersIndexStored = parseInt(localStorage.getItem('playersIndex'), 10);
     let gameReversedStored = (localStorage.getItem('gameReversed') === 'true');
     let playersX = parseInt(localStorage.getItem('playersX'), 10);
     let playersY = parseInt(localStorage.getItem('playersY'), 10);
@@ -273,20 +299,22 @@ loadGameButton.addEventListener("click", () => {
     let computerY = parseInt(localStorage.getItem('computerY'), 10);
 
     // Checking if any data is missing (i.e., if file is corrupted)
-    for (let dataRetrieved of [playersTurnStored, boardIndexStored, modeIndexStored, gameReversedStored, playersX, playersY, computerX, computerY]) {
+    for (let dataRetrieved of [playersTurnStored, boardIndexStored, modeIndexStored, playersIndexStored, gameReversedStored, playersX, playersY, computerX, computerY]) {
         if (dataRetrieved === null || dataRetrieved === undefined || Number.isNaN(dataRetrieved)) {
-            displayAlertMessage("The game CANNOT be loaded because it is corrupted!", 4000, "red", "white");
+            displayAlertMessage("The game CANNOT be loaded because it is corrupted!", 3000, "red", "white");
             return;
         }
     }
 
-    // Updating if no issues found in the loaded data:
+    // Updating only if no issues found in the loaded data:
     playersTurn = playersTurnStored;
     boardIndex = boardIndexStored;
     modeIndex = modeIndexStored;
+    playersIndex = playersIndexStored;
     gameReversed = gameReversedStored;
     selectBoard.selectedIndex = boardIndex;
     selectMode.selectedIndex = modeIndex;
+    selectPlayers.selectedIndex = playersIndex;
     game.style.backgroundImage = `url("Resources/Board/Board-${boardIndex + 1}.jpg")`;
     boardImage.src = `Resources/Board/Board-${boardIndex + 1}.jpg`;
     setCoordinates(player, playersX, playersY);
@@ -317,13 +345,11 @@ loadGameButton.addEventListener("click", () => {
     modeChanged = false; //Because on loading we don't want to force-reset otherwise no worth in it!
 });
 
-clearGameButton.addEventListener("click",()=>
-{
+clearGameButton.addEventListener("click", () => {
     displayAlertMessage("⚠️ Warning! Double click to DELETE the stored save file!", 4000, "red", "white");
 });
 
-clearGameButton.addEventListener("dblclick",()=>
-{
+clearGameButton.addEventListener("dblclick", () => {
     localStorage.clear();
     displayAlertMessage("The game has been CLEARED!", 4000, "red", "white");
 });
@@ -343,6 +369,7 @@ saveSettingsButton.addEventListener("click", () => {
     }
     boardIndex = selectBoard.selectedIndex;
     modeIndex = selectMode.selectedIndex;
+    playersIndex = selectPlayers.selectedIndex;
 
     game.style.backgroundImage = `url(Resources/Board/${selectBoard.value}.jpg)`;
     settingsBox.classList.add("invisible");
@@ -387,14 +414,15 @@ closeInfoButton.addEventListener("click", () => {
 
 
 // ***************************************** Rolling region **********************************************
-function mainFunction() {
+
+// skipEnablingButtons being true implies that it doesn't need to re-enable them.
+// Not enabling is useful when computer's turn is there just after.
+function mainFunction(skipEnablingButtons = false) {
     rollButton.disabled = true; // disable rollButton during roll
     resetButton.disabled = true; // disable resetButton during roll
-    let delay_ms = 75; // delay_ms between steps in ms
     let forced = forcedRollCheckbox.checked;
     let value1 = parseInt(diceNumberInput1.value);
     let value2 = parseInt(diceNumberInput2.value);
-    let offset;
 
     /* Rolling the dice */
     if (!forced) {
@@ -409,7 +437,6 @@ function mainFunction() {
     else {
         offset = 6 + (Math.floor(Math.random() * 6) + 1); // 6 + [1–6]
     }
-
     for (let i = 0; i < offset; i++) {
         setTimeout(() => {
             dices[diceValueMinus1].classList.remove("highlight");
@@ -452,14 +479,12 @@ function mainFunction() {
 
             // If overlapping now
             if (overLap()) player.classList.add("overlap");
-            let winnerDecided = false;
             // Checking if the current player won:
+            winnerDecided = false;
             if (getCoordinates(ele)[0] === 1 && getCoordinates(ele)[1] === 1) {
                 winnerDecided = true;
                 displayMessage(`${playersTurn ? 'Player 1' : 'Player 2'} won!`, 6000, "yellow", "black");
                 playSound("Resources/Sound/Victory.wav");
-                rollButton.disabled = true;
-                resetButton.disabled = true;
                 setTimeout(() => {
                     resetGame();
                     rollButton.disabled = false;
@@ -472,20 +497,33 @@ function mainFunction() {
                 computer.classList.toggle("indicate-turn-second");
             }, 200);
 
-            if (!winnerDecided) {
-                resetButton.disabled = false;   // Enabling the resetButton only after the animation ends 
-                rollButton.disabled = false;    // Enabling the rollButton only after the animation ends  
+            // Enabling the game buttons only after the animation ends and no computers turn thereafter
+            if (!winnerDecided && !skipEnablingButtons) {
+                resetButton.disabled = false;
+                rollButton.disabled = false;
             }
 
         }, (diceValueMinus1 + 1) * delay_ms * 2);
     }, offset * delay_ms);
 }
 
-rollButton.addEventListener("click", mainFunction);
+rollButton.addEventListener("click", () => {
+    //enableSkip being true means that after the current roll is completed, we don't re-enable the rolling and reset buttons
+    let enableSkip = (playersIndex === 0) ? true : false;
+
+    mainFunction(enableSkip);
+    let totalAnimationTime = (offset * delay_ms) + ((diceValueMinus1 + 1) * delay_ms * 2);
+    if (playersIndex == 0) {
+        setTimeout(() => {
+            mainFunction(false);
+        }, totalAnimationTime + 500);
+        // 1000 ms is the gap time
+    }
+});
 
 document.addEventListener("keydown", (event) => {
     if (!rollButton.disabled) {
-        if ((playersTurn && event.code === 'ControlLeft') || (!playersTurn && event.code == 'ControlRight'))
+        if ((playersTurn && event.code === 'ControlLeft') || (playersIndex === 1 && !playersTurn && event.code == 'ControlRight'))
             mainFunction();
     }
 });

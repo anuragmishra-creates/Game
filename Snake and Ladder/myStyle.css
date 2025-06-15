@@ -349,9 +349,17 @@ button:hover {
 }
 
 input[type=checkbox] {
-    transform: scale(1.8);
+    transform: scale(1.5);
 }
 
+.dice-force-options
+{
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.08);
+    background-blend-mode: lighten;
+    border-radius: 0.5rem;
+    text-align: center;
+}
 .save-credits-info-panel {
     grid-row: 3/4;
     grid-column: 1/3;
