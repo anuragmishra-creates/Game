@@ -24,7 +24,7 @@
           <span class="info-value" id="mode-value">Classic</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Players:</span> 
+          <span class="info-label">Players:</span>
           <span class="info-value" id="players-value">Player Vs Computer</span>
         </div>
         <div class="info-row" id="mixed-row" style="display: none">
@@ -110,7 +110,6 @@
         </p>
         <button id="close-info-button">Close</button>
       </div>
-
       <div class="credits-box invisible">
         <h2>🎮 Game Credits</h2>
         <div class="credits-container">
@@ -180,7 +179,6 @@
         </div>
         <button id="close-credits-button">Close</button>
       </div>
-
       <!-- Settings Menu -->
       <div class="settings-box">
         <h2>Settings Menu</h2>
@@ -203,57 +201,75 @@
           </select>
         </div>
         <div class="settings-2">
-          Choose mode:
-          <select id="select-mode" name="mode">
-            <option value="Classic">Classic</option>
-            <option value="Reversed">Reversed</option>
-            <option value="Mixed">Mixed</option>
-          </select>
-          <br />
-          <br />
-          Choose players:
-          <select id="select-players" name="players-selection">
-            <option value="1-Player-1-Computer">👤Player Vs Computer💻</option>
-            <option value="2-players">👤Player Vs Player👤</option>
-          </select>
-          <br />
-          <br />
-          <label for="volume">Volume:</label>
-          <input
-            type="range"
-            id="volume"
-            name="volume"
-            min="0"
-            max="100"
-            value="100"
-          />
-          <br />
-          <label>
-            <br />
-            Forced roll: <input type="checkbox" name="forcedRoll" /> </label
-          ><br />
-          <div class="dice-force-options invisible">
-            <label for="dice-number-1-forced"
-              >The dice value for Player 1 (1 to 6):</label
-            >
+          <div>
+            Choose mode:
+            <select id="select-mode" name="mode">
+              <option value="Classic">Classic</option>
+              <option value="Reversed">Reversed</option>
+              <option value="Mixed">Mixed</option>
+            </select>
+          </div>
+          <div class="reversal-probability-options invisible">
+            <label for="reversal-probability">Reversal probability (Mixed):</label>
             <input
               type="number"
-              id="dice-number-1-forced"
-              name="dice-number-1-forced"
-              min="1"
-              max="6"
-            />
-            <br />
-            <label for="dice-number-2-forced"
-              >The dice value for Player 2 (1 to 6):</label
-            >
+              id="reversal-probability"
+              name="reversal-probability"
+              min="0"
+              max="100"
+              value="10"
+            />%
+          </div>
+          <br/>
+          <div>
+            Choose players:
+            <select id="select-players" name="players-selection">
+              <option value="1-Player-1-Computer">
+                👤Player Vs Computer💻
+              </option>
+              <option value="2-players">👤Player Vs Player👤</option>
+            </select>
+          </div>
+          <br/>
+          <div>
+            <label for="volume">Volume:</label>
             <input
-              type="number"
-              id="dice-number-2-forced"
-              name="dice-number-2-forced"
-              min="1"
-              max="6"
+              type="range"
+              id="volume"
+              name="volume"
+              min="0"
+              max="100"
+              value="100"
             />
+          </div>
+          <br/>
+          <div>
+            <label>
+              Forced roll: <input type="checkbox" name="forcedRoll" />
+            </label>
+            <div class="dice-force-options invisible">
+              <label for="dice-number-1-forced"
+                >The dice value for Player 1 (1 to 6):</label
+              >
+              <input
+                type="number"
+                id="dice-number-1-forced"
+                name="dice-number-1-forced"
+                min="1"
+                max="6"
+              />
+              <br />
+              <label for="dice-number-2-forced"
+                >The dice value for Player 2 (1 to 6):</label
+              >
+              <input
+                type="number"
+                id="dice-number-2-forced"
+                name="dice-number-2-forced"
+                min="1"
+                max="6"
+              />
+            </div>
           </div>
         </div>
 
@@ -263,7 +279,6 @@
           <button id="info-button">INFO</button>
         </div>
       </div>
-
       <!-- Board region-->
       <div class="board-region">
         <div class="game">

@@ -416,7 +416,7 @@ input[type=checkbox] {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    margin: 1rem auto;
+    margin: auto;
     width: min(92%, 78vh);
     aspect-ratio: 1/1;
     background-color: brown;
@@ -578,7 +578,7 @@ input[type=checkbox] {
     padding: 0.8rem 1rem;
     width: 90%;
     height: 100%;
-    font-size: 1.1rem;
+    font-size: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -601,8 +601,15 @@ input[type=checkbox] {
 
 .turn-info-box .info-value {
     font-weight: 700;
-    color: Red;
-    text-shadow: 0 1px 2px #0008;
+    border: 2px solid #0077b6;
+    background-color: #023e8a;
+    border-radius: 0.5rem;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.turn-info-box #turn-value {
+    color: red;
 }
 
 .turn-info-box #mode-value {
@@ -615,6 +622,11 @@ input[type=checkbox] {
 
 .turn-info-box #mixed-value {
     color: #ff006e;
+}
+
+#mode-value:hover, #players-value:hover, #mixed-value:hover, .info-value:hover{
+    transform: scale(1.1) translateY(-1px);
+    transition: all 0.2s ease-in-out 0s;
 }
 
 /* Media queries start */

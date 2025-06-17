@@ -23,6 +23,8 @@ let selectMode = document.querySelector("#select-mode");
 let selectPlayers = document.querySelector("#select-players");
 let volumeSlider = document.querySelector("#volume");
 let forcedRollCheckbox = document.querySelector('input[name="forcedRoll"]');
+let reversalProbabilityContainer = document.querySelector('.reversal-probability-options');
+let reversalProbabilityInput = document.querySelector('input[name="reversal-probability"]');
 let diceForcedOptions = document.querySelector(".dice-force-options");
 let diceNumberInput1 = document.querySelector('#dice-number-1-forced');
 let diceNumberInput2 = document.querySelector('#dice-number-2-forced');
@@ -56,6 +58,7 @@ let modeChanged = false;
 let boardIndex = 0;
 let gameReversed = false;
 let modeIndex = 0;
+let reversalProbability = 0.10;
 let playersIndex = 0; // The option corresponding to the PVP or PVC
 
 // Playing variables:
@@ -84,6 +87,7 @@ function resetGame() {
     setCoordinates(playerOld, 10, 1);
     setCoordinates(computerOld, 10, 1);
     message.classList.add("invisible");
+    winnerDecided = false;
     updateTurnInfoBox();
 }
 
@@ -209,16 +213,16 @@ function updateTurnInfoBox() {
     playersValue.textContent = playersIndex === 0 ? "Player Vs Computer" : "Player Vs Player";
 }
 
-function mixedModeRandomness(reversalProbability) {
+function mixedModeRandomness() {
     if (modeIndex === 2) {
         if (Math.random() < reversalProbability) {
             playSound("Resources/Sound/Notification.mp3", 3000);
             if (!gameReversed) {
-                displayAlertMessage("🌀Suddenly, everything is twisted. Let the chaos begin!", 3000, "purple", "white");
+                displayAlertMessage("⏳🌀Suddenly, everything is twisted. Let the chaos begin!⏳", 3000, "purple", "white");
                 gameReversed = true;
             }
             else {
-                displayAlertMessage("✅Suddenly, everything is reverted-back to normal!", 3000, "white", "black");
+                displayAlertMessage("⏳✅Suddenly, everything is reverted-back to normal!⏳", 3000, "white", "black");
                 gameReversed = false;
             }
             console.log(`gameReverse: ${gameReversed}`);
@@ -292,6 +296,10 @@ selectBoard.addEventListener("change", () => {
 
 selectMode.addEventListener("change", () => {
     modeChanged = true;
+    if (selectMode.selectedIndex === 2)
+        reversalProbabilityContainer.classList.remove('invisible');
+    else
+        reversalProbabilityContainer.classList.add('invisible');
 });
 
 selectPlayers.addEventListener("change", () => {
@@ -407,7 +415,14 @@ saveSettingsButton.addEventListener("click", () => {
     boardIndex = selectBoard.selectedIndex;
     modeIndex = selectMode.selectedIndex;
     playersIndex = selectPlayers.selectedIndex;
-
+    reversalProbability = parseInt(reversalProbabilityInput.value);
+    if (isNaN(reversalProbability)) {
+        reversalProbabilityInput.value = 0; //If field is left empty
+        reversalProbability = 0;
+    }
+    else
+        reversalProbability = reversalProbability / 100;
+    console.log('The reversal probability:', reversalProbability);
     game.style.backgroundImage = `url(Resources/Board/${selectBoard.value}.jpg)`;
     settingsBox.classList.add("invisible");
     settingsBox.disabled = false;
@@ -451,6 +466,12 @@ closeInfoButton.addEventListener("click", () => {
     infoBox.classList.add("invisible");
 });
 
+// Validate Probability Input
+reversalProbabilityInput.addEventListener("input", () => {
+    let value = parseInt(reversalProbabilityInput.value, 10);
+    if (value < 0) reversalProbabilityInput.value = 0;
+    else if (value > 100) reversalProbabilityInput.value = 100;
+});
 
 // ***************************************** Rolling region **********************************************
 
@@ -489,7 +510,7 @@ function mainFunction(skipEnablingButtons = false) {
         console.log("Final dice value:", diceValueMinus1 + 1);
 
         // If mixed mode, then sudden reversal possibility just after dice roll concluded:
-        mixedModeRandomness(0.10);
+        mixedModeRandomness();
 
         // Before movements:
         // Snake and Ladder Movements for both tokens (sudden reversal may affect the other player too!)
@@ -502,6 +523,7 @@ function mainFunction(skipEnablingButtons = false) {
         let old = (playersTurn) ? playerOld : computerOld; //Refers to the current player's shadow
         let [currRow, currCol] = getCoordinates(ele);
         setCoordinates(old, currRow, currCol); // Moving the shadow to current location
+        ele.style.zIndex = "4";
         if ((currRow !== 1) || (currRow === 1 && (currCol - (diceValueMinus1 + 1)) > 0)) {
             for (let move = 0; move < diceValueMinus1 + 1; move++) {
                 setTimeout(() => {
@@ -509,6 +531,7 @@ function mainFunction(skipEnablingButtons = false) {
                 }, move * delay_ms * 2);
             }
         }
+        ele.style.zIndex = playersTurn ? "3" : "2";
 
         setTimeout(() => {
             // After movement:
@@ -518,8 +541,6 @@ function mainFunction(skipEnablingButtons = false) {
 
             // If overlapping now
             if (overLap()) player.classList.add("overlap");
-            // Checking if the current player won:
-            winnerDecided = false;
             if (getCoordinates(ele)[0] === 1 && getCoordinates(ele)[1] === 1) {
                 winnerDecided = true;
                 displayMessage(`${playersTurn ? 'Player 1' : (playersIndex === 0 ? 'Computer' : 'Player 2')} won!`, 6000, "yellow", "black");
@@ -549,15 +570,14 @@ function mainFunction(skipEnablingButtons = false) {
 rollButton.addEventListener("click", () => {
     //enableSkip being true means that after the current roll is completed, we don't re-enable the rolling and reset buttons
     let enableSkip = (playersIndex === 0) ? true : false;
+    mainFunction(enableSkip); //Player 1
 
-    mainFunction(enableSkip);
     let totalAnimationTime = (offset * delay_ms) + ((diceValueMinus1 + 1) * delay_ms * 2);
     if (playersIndex == 0) {
         setTimeout(() => {
             if (!winnerDecided)
                 mainFunction(false);
-        }, totalAnimationTime + 500);
-        // 500 ms is the gap time
+        }, totalAnimationTime + 500); // 500 ms is the gap time
     }
 });
 
@@ -566,15 +586,14 @@ document.addEventListener("keydown", (event) => {
         if ((playersTurn && event.code === 'ControlLeft') || (playersIndex === 1 && !playersTurn && event.code == 'ControlRight')) {
             //enableSkip being true means that after the current roll is completed, we don't re-enable the rolling and reset buttons
             let enableSkip = (playersIndex === 0) ? true : false;
+            mainFunction(enableSkip); //Player 1
 
-            mainFunction(enableSkip);
             let totalAnimationTime = (offset * delay_ms) + ((diceValueMinus1 + 1) * delay_ms * 2);
             if (playersIndex == 0) {
                 setTimeout(() => {
                     if (!winnerDecided)
                         mainFunction(false);
-                }, totalAnimationTime + 500);
-                // 500 ms is the gap time
+                }, totalAnimationTime + 500); // 500 ms is the gap time
             }
         }
     }
