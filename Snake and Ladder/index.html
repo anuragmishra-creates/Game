@@ -12,8 +12,9 @@
     <header>Snake & Ladder Game</header>
 
     <div id="settings-button"></div>
+    <div class="backdrop"></div>
     <div class="container">
-      <!-- Current Game Info -->
+      <!-- Current Game Info and Stats Box -->
       <div class="turn-info-box">
         <div class="info-row">
           <span class="info-label">Turn:</span>
@@ -35,7 +36,8 @@
       <!-- Messages, alerts and pop-ups-->
       <div class="message invisible">/Empty\</div>
       <div class="alert-message invisible">/Empty\</div>
-      <div class="info-box invisible">
+      <!-- Game Info and Playing Instructions Box-->
+      <div class="info-box slide-out">
         <h2>🎲 How to Play Snake & Ladder</h2>
         <p>
           Snake and Ladder is a simple board game traditionally played between 2
@@ -110,7 +112,8 @@
         </p>
         <button id="close-info-button">Close</button>
       </div>
-      <div class="credits-box invisible">
+      <!-- Credits Box -->
+      <div class="credits-box slide-out">
         <h2>🎮 Game Credits</h2>
         <div class="credits-container">
           <div class="credit-card">
@@ -179,7 +182,7 @@
         </div>
         <button id="close-credits-button">Close</button>
       </div>
-      <!-- Settings Menu -->
+      <!-- Settings Box-->
       <div class="settings-box">
         <h2>Settings Menu</h2>
         <div class="save-load-clear-panel">
@@ -210,7 +213,9 @@
             </select>
           </div>
           <div class="reversal-probability-options invisible">
-            <label for="reversal-probability">Reversal probability (Mixed):</label>
+            <label for="reversal-probability"
+              >Reversal probability (Mixed):</label
+            >
             <input
               type="number"
               id="reversal-probability"
@@ -220,7 +225,7 @@
               value="10"
             />%
           </div>
-          <br/>
+          <br />
           <div>
             Choose players:
             <select id="select-players" name="players-selection">
@@ -230,7 +235,7 @@
               <option value="2-players">👤Player Vs Player👤</option>
             </select>
           </div>
-          <br/>
+          <br />
           <div>
             <label for="volume">Volume:</label>
             <input
@@ -242,7 +247,7 @@
               value="100"
             />
           </div>
-          <br/>
+          <br />
           <div>
             <label>
               Forced roll: <input type="checkbox" name="forcedRoll" />
@@ -332,6 +337,43 @@
         <button id="roll-button">ROLL</button>
         <button id="reset-button">RESET</button>
       </div>
+    </div>
+    <!-- Winner Announcement Modal -->
+    <div class="winner-modal invisible">
+      <div class="winner-modal-content">
+        <div class="winner-modal-header">
+          <span class="winner-trophy">🏆</span>
+          <span class="winner-title">Winner!</span>
+        </div>
+        <div class="winner-modal-body">
+          <div class="winner-stats">
+            <div class="winner-player" id="winner-player"></div>
+            <div class="vs-icon">VS</div>
+            <div class="winner-player" id="loser-player"></div>
+          </div>
+          <div class="winner-stats-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Snakes</th>
+                  <th>Ladders</th>
+                  <th>Dice Sum</th>
+                  <th>Last Roll</th>
+                </tr>
+              </thead>
+              <tbody id="winner-stats-tbody">
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="winner-modal-footer">
+          <button id="winner-newgame-btn">New Game</button>
+          <button id="winner-share-btn">Share Result</button>
+        </div>
+      </div>
+      <div class="backdrop"></div>
     </div>
     <footer>All rights reserved &copy Anurag Mishra</footer>
     <script type="module" src="myConfig.js"></script>

@@ -46,7 +46,9 @@ let player = document.querySelector(".player");
 let computer = document.querySelector(".computer");
 let playerOld = document.querySelector(".player-old");
 let computerOld = document.querySelector(".computer-old");
-
+const statsBox = document.createElement("div");
+statsBox.className = "token-stats-box invisible";
+document.body.appendChild(statsBox);
 // Dynamic variables' declaration and initializations:
 
 // Settings variables:
@@ -65,6 +67,29 @@ let playersIndex = 0; // The option corresponding to the PVP or PVC
 let diceValueMinus1 = 0; //Ranges from 0 to 5
 let playersTurn = true;
 let gameStarting = true;
+let stats = {
+    player: {
+        snakes: 0,
+        ladders: 0,
+        diceSum: 0,
+        lastRoll: 0
+    },
+    computer: {
+        snakes: 0,
+        ladders: 0,
+        diceSum: 0,
+        lastRoll: 0
+    }
+};
+
+// Winner Modal Logic
+const winnerModal = document.querySelector('.winner-modal');
+const winnerPlayerDiv = document.getElementById('winner-player');
+const loserPlayerDiv = document.getElementById('loser-player');
+const winnerStatsTbody = document.getElementById('winner-stats-tbody');
+const winnerNewGameBtn = document.getElementById('winner-newgame-btn');
+const winnerShareBtn = document.getElementById('winner-share-btn');
+const backdrop = document.querySelector('.backdrop');
 
 // Does NOT reset Settings (Board, Mode, Volume, Forced-Roll, etc)!
 function resetGame() {
@@ -77,7 +102,8 @@ function resetGame() {
         gameReversed = false;
     else //Utmost necessary in Mixed-mode
         gameReversed = true;
-
+    stats.player = { snakes: 0, ladders: 0, diceSum: 0, lastRoll: 0 };
+    stats.computer = { snakes: 0, ladders: 0, diceSum: 0, lastRoll: 0 };
     backgroundMusic.currentTime = 0;
     player.classList.add("indicate-turn-first");
     computer.classList.remove("indicate-turn-second");
@@ -229,10 +255,194 @@ function mixedModeRandomness() {
         }
     }
 }
+// Helper: Get avatar image for player/computer
+function getAvatar(type) {
+    if (type === "player") return "Resources/Character/Character1.png";
+    if (type === "computer") return "Resources/Character/Character2.png";
+    return "";
+}
+
+// Helper: Get display name
+function getDisplayName(type) {
+    if (type === "player") return "Player 1";
+    if (playersIndex === 0) return "Computer";
+    return "Player 2";
+}
+
+// Show Winner Modal
+function showWinnerModal(winnerType) {
+    // Determine loser type
+    const loserType = winnerType === "player" ? "computer" : "player";
+    // Fill avatars and names
+    winnerPlayerDiv.innerHTML = `
+        <img class="winner-avatar" src="${getAvatar(winnerType)}" alt="${getDisplayName(winnerType)}"/>
+        <span class="winner-name" style="color:#00b300;">${getDisplayName(winnerType)}<br><span style="font-size:1.3em;">🏆</span></span>
+    `;
+    winnerPlayerDiv.className = "winner-player winner";
+    loserPlayerDiv.innerHTML = `
+        <img class="winner-avatar" src="${getAvatar(loserType)}" alt="${getDisplayName(loserType)}"/>
+        <span class="winner-name" style="color:#b5179e;">${getDisplayName(loserType)}</span>
+    `;
+    loserPlayerDiv.className = "winner-player loser";
+    // Fill stats table
+    winnerStatsTbody.innerHTML = `
+      <tr>
+        <td>${getDisplayName("player")}</td>
+        <td>${stats.player.snakes}</td>
+        <td>${stats.player.ladders}</td>
+        <td>${stats.player.diceSum}</td>
+        <td>${stats.player.lastRoll}</td>
+      </tr>
+      <tr>
+        <td>${getDisplayName("computer")}</td>
+        <td>${stats.computer.snakes}</td>
+        <td>${stats.computer.ladders}</td>
+        <td>${stats.computer.diceSum}</td>
+        <td>${stats.computer.lastRoll}</td>
+      </tr>
+    `;
+    // Show modal
+    winnerModal.classList.remove('invisible');
+    // Disable interaction with rest of UI
+    document.body.classList.add('winner-modal-open');
+    // Trap focus
+    winnerNewGameBtn.focus();
+}
+
+// Hide Winner Modal
+function hideWinnerModal() {
+    winnerModal.classList.add('invisible');
+    document.body.classList.remove('winner-modal-open');
+}
+
+// New Game: Go to settings
+winnerNewGameBtn.onclick = () => {
+    resetGame();
+    hideWinnerModal();
+    settingsBox.classList.remove("slide-out");
+    backdrop.classList.remove("invisible");
+};
+
+// Share Result: Copy to clipboard
+winnerShareBtn.onclick = () => {
+    const winner = winnerPlayerDiv.querySelector('.winner-name').textContent.replace(/\s+/g, ' ').trim();
+    const loser = loserPlayerDiv.querySelector('.winner-name').textContent.replace(/\s+/g, ' ').trim();
+    const statsText = `🏆 ${winner} wins Snake & Ladder!\n\nStats:\nPlayer 1 - Snakes: ${stats.player.snakes}, Ladders: ${stats.player.ladders}, Dice Sum: ${stats.player.diceSum}, Last Roll: ${stats.player.lastRoll}\n${playersIndex === 0 ? "Computer" : "Player 2"} - Snakes: ${stats.computer.snakes}, Ladders: ${stats.computer.ladders}, Dice Sum: ${stats.computer.diceSum}, Last Roll: ${stats.computer.lastRoll}\n\nPlay now!`;
+    navigator.clipboard.writeText(statsText).then(() => {
+        winnerShareBtn.textContent = "Copied!";
+        setTimeout(() => winnerShareBtn.textContent = "Share Result", 1200);
+    });
+};
+
+// Prevent closing modal by clicking backdrop
+backdrop.onclick = (e) => {
+    // Do nothing
+};
+
+// Prevent tabbing out of modal
+winnerModal.addEventListener('keydown', function (e) {
+    if (e.key === "Tab") {
+        e.preventDefault();
+        winnerNewGameBtn.focus();
+    }
+});
+
+// Prevent interaction with rest of UI while modal is open
+document.body.addEventListener('click', function (e) {
+    if (!winnerModal.classList.contains('invisible') && !winnerModal.contains(e.target)) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}, true);
+
+// Prevent scrolling while modal is open
+const style = document.createElement('style');
+style.innerHTML = `
+body.winner-modal-open {
+    overflow: hidden !important;
+    pointer-events: none;
+}
+body.winner-modal-open .winner-modal,
+body.winner-modal-open .winner-modal * {
+    pointer-events: auto !important;
+}
+`;
+document.head.appendChild(style);
+
+function announceWinner(winnerType) {
+    showWinnerModal(winnerType);
+}
+
+function showStatsBox(tokenType, event) {
+    const s = stats[tokenType];
+    statsBox.innerHTML = `
+        <div class="token-stats-title">${tokenType === "player" ? "Player 1" : (playersIndex === 0 ? "Computer" : "Player 2")} Stats</div>
+        <div class="token-stats-row"><span>🐍 Snakes:</span> <span>${s.snakes}</span></div>
+        <div class="token-stats-row"><span>🪜 Ladders:</span> <span>${s.ladders}</span></div>
+        <div class="token-stats-row"><span>🎲 Dice Sum:</span> <span>${s.diceSum}</span></div>
+        <div class="token-stats-row"><span>🎯 Last Roll:</span> <span>${s.lastRoll}</span></div>
+        <button class="close-stats-btn">✖</button>
+    `;
+    statsBox.classList.remove("invisible");
+
+    // Position near the token (use event for mouse position, fallback to token position)
+    let x = event.clientX, y = event.clientY;
+    if (!x || !y) {
+        const rect = event.target.getBoundingClientRect();
+        x = rect.right + 10;
+        y = rect.top + 10;
+    }
+
+    // --- Ensure the box stays within the viewport ---
+    const boxWidth = 220; // Approximate width of your stats box
+    const boxHeight = 180; // Approximate height of your stats box
+    const padding = 12;
+
+    // Default position
+    let left = x + 10;
+    let top = y - 10;
+
+    // Adjust if overflowing right
+    if (left + boxWidth > window.innerWidth - padding) {
+        left = window.innerWidth - boxWidth - padding;
+    }
+    // Adjust if overflowing bottom
+    if (top + boxHeight > window.innerHeight - padding) {
+        top = window.innerHeight - boxHeight - padding;
+    }
+    // Adjust if overflowing left
+    if (left < padding) left = padding;
+    // Adjust if overflowing top
+    if (top < padding) top = padding;
+
+    statsBox.style.left = `${left}px`;
+    statsBox.style.top = `${top}px`;
+
+    // Close button
+    statsBox.querySelector(".close-stats-btn").onclick = () => statsBox.classList.add("invisible");
+}
+
+// Hide stats box on click outside
+document.addEventListener("click", (e) => {
+    if (!statsBox.contains(e.target) && !e.target.classList.contains("player") && !e.target.classList.contains("computer")) {
+        statsBox.classList.add("invisible");
+    }
+});
+
+// --- Attach click listeners to tokens ---
+player.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showStatsBox("player", e);
+});
+computer.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showStatsBox("computer", e);
+});
 
 function snakeAndLadderMovements(ele) {
     let [currRow, currCol] = getCoordinates(ele);
     let key = `${currRow},${currCol}`;
+    let tokenType = (ele === player) ? "player" : "computer";
     let newCoord;
 
     // Snake or Ladder movements:
@@ -247,6 +457,7 @@ function snakeAndLadderMovements(ele) {
                     setCoordinates(ele, newCoord.row, newCoord.col);
                     playSound("Resources/Sound/Ladder.mp3", 3000);
                     displayMessage("Climbed-up the ladder!", 3000, "green");
+                    stats[tokenType].ladders += 1;
                 }
                 // Snake:
                 newCoord = snakeMap[boardIndex].get(key);
@@ -254,6 +465,7 @@ function snakeAndLadderMovements(ele) {
                     setCoordinates(ele, newCoord.row, newCoord.col);
                     playSound("Resources/Sound/Snake.mp3", 3000);
                     displayMessage("Eaten by the snake!", 3000, "red");
+                    stats[tokenType].snakes += 1;
                 }
                 break;
 
@@ -265,6 +477,7 @@ function snakeAndLadderMovements(ele) {
                     setCoordinates(ele, newCoord.row, newCoord.col);
                     playSound("Resources/Sound/Ladder.mp3", 3000);
                     displayMessage("Tripped down the ladder!", 3000, "red");
+                    stats[tokenType].ladders += 1;
                 }
 
                 // Snake:
@@ -273,6 +486,7 @@ function snakeAndLadderMovements(ele) {
                     setCoordinates(ele, newCoord.row, newCoord.col);
                     playSound("Resources/Sound/Snake.mp3", 3000);
                     displayMessage("Wait, the snake helped!?", 3000, "green");
+                    stats[tokenType].snakes += 1;
                 }
                 break;
         }
@@ -285,8 +499,9 @@ backgroundMusic.addEventListener("canplaythrough", () => {
 
 // ********************************************* Settings **************************************************
 settingsButton.addEventListener("click", () => {
-    settingsBox.classList.remove("invisible");
-    settingsBox.disabled = true;
+    settingsBox.classList.remove("slide-out");
+    backdrop.classList.remove("invisible");
+    // settingsBox.disabled = true;
 });
 
 selectBoard.addEventListener("change", () => {
@@ -319,6 +534,7 @@ saveGameButton.addEventListener("click", () => {
     localStorage.setItem('modeIndex', modeIndex);
     localStorage.setItem('playersIndex', playersIndex);
     localStorage.setItem('gameReversed', gameReversed);
+    localStorage.setItem("stats", JSON.stringify(stats));
     // gameReversed is useful for determining the current state of the mixed-mode
     displayAlertMessage("The game has been SAVED!", 3000, "blue", "white");
 });
@@ -337,13 +553,14 @@ loadGameButton.addEventListener("click", () => {
     let modeIndexStored = parseInt(localStorage.getItem('modeIndex'), 10);
     let playersIndexStored = parseInt(localStorage.getItem('playersIndex'), 10);
     let gameReversedStored = (localStorage.getItem('gameReversed') === 'true');
+    let statsStored = JSON.parse(localStorage.getItem("stats"));
     let playersX = parseInt(localStorage.getItem('playersX'), 10);
     let playersY = parseInt(localStorage.getItem('playersY'), 10);
     let computerX = parseInt(localStorage.getItem('computerX'), 10);
     let computerY = parseInt(localStorage.getItem('computerY'), 10);
 
     // Checking if any data is missing (i.e., if file is corrupted)
-    for (let dataRetrieved of [playersTurnStored, boardIndexStored, modeIndexStored, playersIndexStored, gameReversedStored, playersX, playersY, computerX, computerY]) {
+    for (let dataRetrieved of [playersTurnStored, boardIndexStored, modeIndexStored, playersIndexStored, gameReversedStored, statsStored, playersX, playersY, computerX, computerY]) {
         if (dataRetrieved === null || dataRetrieved === undefined || Number.isNaN(dataRetrieved)) {
             displayAlertMessage("The game CANNOT be loaded because it is corrupted!", 3000, "red", "white");
             return;
@@ -356,6 +573,7 @@ loadGameButton.addEventListener("click", () => {
     modeIndex = modeIndexStored;
     playersIndex = playersIndexStored;
     gameReversed = gameReversedStored;
+    stats = statsStored;
     selectBoard.selectedIndex = boardIndex;
     selectMode.selectedIndex = modeIndex;
     selectPlayers.selectedIndex = playersIndex;
@@ -384,8 +602,10 @@ loadGameButton.addEventListener("click", () => {
         displayAlertMessage("The game has been LOADED in CLASSIC!", 4000, "white", "black");
     else if (modeIndex === 1)
         displayAlertMessage("The game has been LOADED in REVERSED!", 4000, "purple", "white");
-    else
+    else {
         displayAlertMessage(`The game has been LOADED in MIXED: ${gameReversed ? 'Reversed' : 'Normal'}!`, 4000, "darkorange", "black");
+        reversalProbabilityContainer.classList.remove("invisible");
+    }
     modeChanged = false; //Because on loading we don't want to force-reset otherwise no worth in it!
     updateTurnInfoBox();
 });
@@ -409,6 +629,7 @@ resetButton.addEventListener("click", () => {
 
 saveSettingsButton.addEventListener("click", () => {
 
+    backdrop.classList.add("invisible");
     if (modeChanged || boardChanged) {
         resetGame();
     }
@@ -424,8 +645,8 @@ saveSettingsButton.addEventListener("click", () => {
         reversalProbability = reversalProbability / 100;
     console.log('The reversal probability:', reversalProbability);
     game.style.backgroundImage = `url(Resources/Board/${selectBoard.value}.jpg)`;
-    settingsBox.classList.add("invisible");
-    settingsBox.disabled = false;
+    settingsBox.classList.add("slide-out");
+    // settingsBox.disabled = false;
 
     // Mode-change message only when the mode and/or the board settings are changed!
     if (modeChanged || boardChanged || gameStarting) {
@@ -451,19 +672,19 @@ saveSettingsButton.addEventListener("click", () => {
 });
 
 openCreditsButton.addEventListener("click", () => {
-    creditsBox.classList.remove("invisible");
+    creditsBox.classList.remove("slide-out");
 });
 
 closeCreditsButton.addEventListener("click", () => {
-    creditsBox.classList.add("invisible");
+    creditsBox.classList.add("slide-out");
 });
 
 openInfoButton.addEventListener("click", () => {
-    infoBox.classList.remove("invisible");
+    infoBox.classList.remove("slide-out");
 });
 
 closeInfoButton.addEventListener("click", () => {
-    infoBox.classList.add("invisible");
+    infoBox.classList.add("slide-out");
 });
 
 // Validate Probability Input
@@ -507,7 +728,15 @@ function mainFunction(skipEnablingButtons = false) {
 
     /* Conclusions of the roll */
     setTimeout(() => {
+        // Update the token's stats once the roll ends
         console.log("Final dice value:", diceValueMinus1 + 1);
+        if (playersTurn) {
+            stats.player.lastRoll = diceValueMinus1 + 1;
+            stats.player.diceSum += diceValueMinus1 + 1;
+        } else {
+            stats.computer.lastRoll = diceValueMinus1 + 1;
+            stats.computer.diceSum += diceValueMinus1 + 1;
+        }
 
         // If mixed mode, then sudden reversal possibility just after dice roll concluded:
         mixedModeRandomness();
@@ -543,13 +772,11 @@ function mainFunction(skipEnablingButtons = false) {
             if (overLap()) player.classList.add("overlap");
             if (getCoordinates(ele)[0] === 1 && getCoordinates(ele)[1] === 1) {
                 winnerDecided = true;
-                displayMessage(`${playersTurn ? 'Player 1' : (playersIndex === 0 ? 'Computer' : 'Player 2')} won!`, 6000, "yellow", "black");
                 playSound("Resources/Sound/Victory.wav");
-                setTimeout(() => {
-                    resetGame();
-                    rollButton.disabled = false;
-                    resetButton.disabled = false;
-                }, 6000);
+                announceWinner(playersTurn ? "player" : "computer");
+                rollButton.disabled = false;
+                resetButton.disabled = false;
+                return;
             }
             playersTurn = !playersTurn;
             setTimeout(() => {
