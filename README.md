@@ -1,4 +1,5 @@
 # 🎲 Snake & Ladder – By anuragmishra-creates
+## Last Updated: 19 June 2025
 
 Welcome to a feature-rich, fun-packed digital version of the timeless board game: **Snake and Ladder**! Built with HTML, CSS, and JavaScript, this game blends nostalgic gameplay with some surprising twists — all in your browser.
 
@@ -19,34 +20,46 @@ Snake and Ladder is a simple board game traditionally played between 2 or more p
 This version of Snake & Ladder includes several gameplay and visual enhancements:
 
 - 🎨 **Board Selection**  
-  Choose from multiple beautifully designed boards (while not fully customizable, each offers a distinct visual style).
+  Choose from multiple beautifully designed boards (while not fully customizable, each offers a distinct visual style). A sleek board preview shows each of the chosen boards elegantly.
 
 - ⚙️ **Game Modes**  
   Every board can be played in one of three unique modes:
 
-  - ✅ **Classic Mode:** Snakes pull you down, ladders lift you up — the traditional way!
-  - 🌀 **Reversed Mode:** Snakes help you climb up from their tails, while ladders trip you down to the bottom!
-  - ❓ **Mixed Mode:** Snakes and ladders randomly switch behaviors during the game — with alerts to keep you on your toes!
+  - ✅ **Classic Mode:** Snakes pull you down, ladders lift you up — the traditional way!  
+  - 🌀 **Reversed Mode:** Snakes help you climb up from their tails, while ladders trip you down to the bottom!  
+  - ❓ **Mixed Mode:** Snakes and ladders randomly switch behaviors during the game — with alerts to keep you on your toes! You can also control the **reversal probability** from the settings panel, which determines how likely the state is to flip after each dice roll.
 
 - ⚙️ **Opponent Type**  
-  Every board can be played in one of two ways:
+  Every board can be played in one of two ways:  
+  - **👤 Player Vs Computer 💻**  
+  - **👤 Player Vs Player 👤**
 
-  - **👤Player Vs Computer💻**
-  - **👤Player Vs Player👤**
-  
 - 🎲 **Forced Dice Rolls**  
   Enable this fun mode to **manually set dice values** for each player. Great for testing, playful cheating, or reliving that childhood dream of always rolling sixes!
 
-- 💾 **Save & Load**  
-  You can save your game's progress to your browser’s local storage and load it later to continue playing. The **Save** and **Load** buttons are available in the top-right Settings panel.
+- 💾 **Save, Load & Clear**  
+  Save your game's progress to your browser’s local storage and load it later to continue playing. You’ll find **Save**, **Load**, and **Clear** buttons in the top-right Settings panel.
 
+- 📊 **Token Statistics**  
+  Each token displays a detailed stats box showing the **number of snakes and ladders encountered**, the **total dice sum**, and the **last dice roll** — updated live as the game progresses.
+
+- 🏆 **Winner Board**  
+  At the end of each game, a final **Winner Board** presents the winner along with a side-by-side comparison of both tokens’ stats — a neat summary of how the match played out.
+
+- 🧭 **Game Info Box**  
+  A dedicated info panel shows **whose turn it is**, the current **game mode**, whether it’s **Player vs Computer or Player vs Player**, and the **current board state** (normal or reversed) — especially helpful in **Mixed Mode**, where the state can change unpredictably.
 ---
 
-## 🔮  Features to be added in the future updates
+## 🔮  Features to be added in the future updates (soon)
 
-- Timed challenge 
-- Hover info (about snake ladder and tokens, count of snakes and ladders encountered by a particular token).
-- Game stats at the end of each game
+- Timed challenge
+- Auto-roll dice
+- Dice duel
+- Magic mode
+- Chaotic mode
+- More tokens
+- Token customization
+- Live winning probability indicator 
 - Board editor (customization)
 
 ---
