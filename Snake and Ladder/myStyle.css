@@ -13,7 +13,7 @@ body {
 }
 
 header {
-    height: clamp(1rem, 15vw, 5rem);
+    height: clamp(1rem, 12vw, 4rem);
     width: 100%;
     background-color: #03045e;
 
@@ -26,7 +26,7 @@ header {
 
 footer {
     margin: auto;
-    height: clamp(2rem, 10vw, 4rem);
+    height: clamp(2rem, 8vw, 3rem);
     width: 100%;
     background-color: #03045e;
 
@@ -405,7 +405,7 @@ input[type=checkbox] {
     background-repeat: no-repeat;
 
     display: grid;
-    overflow: hidden;
+    overflow: auto;
     grid-template-columns: 6fr 2fr 1fr;
     grid-template-rows: 1fr 2fr 1fr;
     align-items: flex-start;
@@ -428,6 +428,7 @@ input[type=checkbox] {
     align-items: center;
     margin: auto;
     width: min(92%, 78vh);
+    max-height: 100%;
     aspect-ratio: 1/1;
     background-color: brown;
     border: 2px solid black;
@@ -435,13 +436,14 @@ input[type=checkbox] {
 }
 
 .game {
-    position: relative;
-    z-index: 0;
+    /*     position: relative;
+    z-index: 0; */
     display: grid;
     grid-template-rows: repeat(10, 1fr);
     grid-template-columns: repeat(10, 1fr);
     margin: 1rem auto;
     width: 95%;
+    max-height: 95%;
     aspect-ratio: 1/1;
     border: 2px solid black;
     background-image: url("Resources/Board/Board-1.jpg");
@@ -526,33 +528,29 @@ input[type=checkbox] {
     transition: transform 0.5s ease-in-out 0s;
 }
 
+.player {
+    background-image: url(Resources/Character/Character1.png);
+}
+
+.computer {
+    background-image: url(Resources/Character/Character2.png);
+}
+
+.player.overlap {
+    background-image: url(Resources/Character/Overlap.png);
+}
+
 .player:hover,
 .computer:hover {
     transform: scale(1.5);
 }
 
 .indicate-turn-first {
-    z-index: 10;
-    box-shadow: 0px 0px 6px 6px green;
+    box-shadow: 0px 0px 6px 5px green;
 }
 
 .indicate-turn-second {
-    z-index: 10;
-    box-shadow: 0px 0px 6px 6px purple;
-}
-
-.player {
-    z-index: 3;
-    background-image: url(Resources/Character/Character1.png);
-}
-
-.computer {
-    z-index: 2;
-    background-image: url(Resources/Character/Character2.png);
-}
-
-.player.overlap {
-    background-image: url(Resources/Character/Overlap.png);
+    box-shadow: 0px 0px 6px 5px purple;
 }
 
 .player-old,
@@ -781,10 +779,14 @@ input[type=checkbox] {
 
 @media only screen and (max-width: 900px) {
 
-    .alert-message,
-    .message {
-        width: 90%;
+    .alert-message {
+        width: 95%;
         height: 100px;
+    }
+
+    .message {
+        width: 95%;
+        height: 50px;
     }
 
     .board-region {
@@ -830,6 +832,7 @@ input[type=checkbox] {
     }
 
     .board-region {
+        width: 99%;
         grid-row: 2/3;
         grid-column: 1/2;
     }
@@ -1078,8 +1081,7 @@ input[type=checkbox] {
     transform: scale(1.08) translateY(-2px);
 }
 
-#winner-close-btn
-{
+#winner-close-btn {
     background: linear-gradient(90deg, darkred, red);
     color: white;
 }
@@ -1099,5 +1101,33 @@ input[type=checkbox] {
     .winner-stats-table td {
         padding: 0.3em 0.5em;
         font-size: 0.95rem;
+    }
+}
+
+#turn-indicator-arrow {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid darkgreen;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: floatArrow 1s ease-in-out infinite;
+}
+
+/* For arrow indicating the turn */
+@keyframes floatArrow {
+    0% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+
+    100% {
+        transform: translateX(-50%) translateY(0);
     }
 }

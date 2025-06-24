@@ -10,7 +10,7 @@
   <body>
     <!-- HEADER -->
     <header>Snake & Ladder Game</header>
-
+    <span id="turn-indicator-arrow"></span>
     <div id="settings-button"></div>
     <div class="backdrop"></div>
     <div class="container">
@@ -248,6 +248,12 @@
             />
           </div>
           <br />
+          <div>
+            <label>
+              Extra turn for 6:
+              <input type="checkbox" name="extra-turn-for-six" checked/>
+            </label>
+          </div>
           <div>
             <label>
               Forced roll: <input type="checkbox" name="forcedRoll" />
