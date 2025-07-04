@@ -1,5 +1,5 @@
 # 🎲 Snake & Ladder – By anuragmishra-creates
-## Last Updated: 19 June 2025
+## Version 2.0.0
 
 Welcome to a feature-rich, fun-packed digital version of the timeless board game: **Snake and Ladder**! Built with HTML, CSS, and JavaScript, this game blends nostalgic gameplay with some surprising twists — all in your browser.
 
@@ -34,33 +34,35 @@ This version of Snake & Ladder includes several gameplay and visual enhancements
   - **👤 Player Vs Computer 💻**  
   - **👤 Player Vs Player 👤**
 
-- 🎲 **Forced Dice Rolls**  
-  Enable this fun mode to **manually set dice values** for each player. Great for testing, playful cheating, or reliving that childhood dream of always rolling sixes!
-
 - 💾 **Save, Load & Clear**  
   Save your game's progress to your browser’s local storage and load it later to continue playing. You’ll find **Save**, **Load**, and **Clear** buttons in the top-right Settings panel.
 
 - 📊 **Token Statistics**  
-  Each token displays a detailed stats box showing the **number of snakes and ladders encountered**, the **total dice sum**, and the **last dice roll** — updated live as the game progresses.
+  On clicking a token, it displays a detailed stats box showing the **number of snakes and ladders encountered**, the **total dice sum**, and the **last dice roll** — updated live as the game progresses.
 
 - 🏆 **Winner Board**  
   At the end of each game, a final **Winner Board** presents the winner along with a side-by-side comparison of both tokens’ stats — a neat summary of how the match played out.
 
 - 🧭 **Game Info Box**  
   A dedicated info panel shows **whose turn it is**, the current **game mode**, whether it’s **Player vs Computer or Player vs Player**, and the **current board state** (normal or reversed) — especially helpful in **Mixed Mode**, where the state can change unpredictably.
+
+- 🔄 **Gameplay Toggles**  
+  These flexible options can be enabled or disabled in any combination to fine-tune how the game plays:
+  - 🎁 **Extra Turn on Six:** If enabled, rolling a six gives the current token an extra turn.
+  - 🔓 **Unlock Only on Six:** Tokens can only enter the board when a six is rolled — mimicking traditional house rules.
+  - ⏱ **Auto Roll Timeout:** Prevent stalled games by enabling automatic dice rolls if a player doesn’t roll within a set time limit.
+  - 🎲 **Forced Dice Rolls:** Enable this fun mode to manually set dice values for each player. Great for testing, playful cheating, or reliving that childhood dream of always rolling sixes!
+
 ---
 
 ## 🔮  Features to be added in the future updates (soon)
 
-- Timed challenge
-- Auto-roll dice
-- Dice duel
-- Magic mode
-- Chaotic mode
-- More tokens
-- Token customization
-- Live winning probability indicator 
-- Board editor (customization)
+- Timed challenge toggle
+- Dice duel mechanics and Token capture mechanics apart from the existing Overlapping mechanics 
+- Magic and Chaotic modes
+- More tokens and Token customization
+- Live winning probability indicator
+- Advanced Board editor with extreme customizability
 
 ---
 
@@ -85,17 +87,6 @@ This version of Snake & Ladder includes several gameplay and visual enhancements
 ## 🧠 Inspiration
 
 This project was created for fun and learning. It brings together coding, creativity, design, and a bit of childhood magic — all packed into one board game.
-
----
-
-## 📬 Feedback & Contributions
-
-Feel free to fork the project or submit issues and improvements. Contributions are welcome, especially if you’re adding features like:
-
-- Multiplayer mode
-- Online syncing
-- Custom board builder
-- Token editor
 
 ---
 
