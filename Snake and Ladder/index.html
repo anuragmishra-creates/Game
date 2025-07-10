@@ -1,199 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snake and Ladder</title>
-    <link rel="stylesheet" href="myStyle.css" />
-    <link rel="icon" type="image/x-icon" href="./Resources/favicon-32x32.png" />
-  </head>
-  <body>
-    <!-- HEADER -->
-    <header>Snake & Ladder Game</header>
-    <span id="turn-indicator-arrow"></span>
-    <div id="settings-button"></div>
-    <div class="backdrop"></div>
-    <div class="container">
-      <!-- Current Game Info and Stats Box -->
-      <div class="turn-info-box">
-        <div class="info-row">
-          <span class="info-label">Turn:</span>
-          <span class="info-value" id="turn-value">Player 1</span>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake and Ladder</title>
+  <link rel="stylesheet" href="myStyle.css" />
+  <link rel="icon" type="image/x-icon" href="./Resources/favicon-32x32.png" />
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="main-heading">Snake & Ladder</div>
+    <div id="bag-button"></div>
+  </header>
+  <span id="turn-indicator-arrow"></span>
+  <div id="settings-button"></div>
+  <div class="backdrop"></div>
+  <div class="container">
+    <!-- Current Game Info and Stats Box -->
+    <div class="turn-info-box">
+      <div class="info-row">
+        <span class="info-label">Turn:</span>
+        <span class="info-value" id="turn-value">Player 1</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Mode:</span>
+        <span class="info-value" id="mode-value">Classic</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Players:</span>
+        <span class="info-value" id="players-value">Player Vs Computer</span>
+      </div>
+      <div class="info-row" id="mixed-row" style="display: none">
+        <span class="info-label">Mixed State:</span>
+        <span class="info-value" id="mixed-value">Normal</span>
+      </div>
+    </div>
+    <!-- Messages, alerts and pop-ups-->
+    <div class="message invisible">/Empty\</div>
+    <div class="alert-message invisible">/Empty\</div>
+    <!-- Game Info and Playing Instructions Box-->
+    <div class="info-box slide-out">
+      <h2>🎲 How to Play Snake & Ladder</h2>
+      <p>
+        Snake and Ladder is a simple board game traditionally played between 2
+        or more players. The goal is to race your token from square 1 to 100.
+        On your turn, roll the dice and move forward the number of spaces
+        shown.
+      </p>
+      <p>
+        <strong>🎯 Land on a ladder?</strong> You'll instantly climb to the
+        top of it!<br />
+        <strong>🐍 Land on a snake?</strong> It'll slide you down to its
+        tail!<br />
+        First to reach square 100 wins!
+      </p>
+
+      <h3>🧩 Game Features in This Version</h3>
+      <ul>
+
+        <li>
+          🎨 <strong>Board Selection:</strong> Choose from multiple beautifully designed boards. A sleek board preview
+          shows each of the chosen boards elegantly.
+        </li>
+        <li>
+          ⚙️ <strong>Game Modes:</strong> Every board can be played in one of three unique modes:
+          <ul>
+            <li>
+              ✅ <strong>Classic Mode:</strong> Snakes pull you down, ladders lift you up — the traditional way!
+            </li>
+            <li>
+              🌀 <strong>Reversed Mode:</strong> Snakes help you climb up from their tails, while ladders trip you down
+              to the bottom!
+            </li>
+            <li>
+              ❓ <strong>Mixed Mode:</strong> Snakes and ladders randomly switch behaviors during the game — with alerts
+              to keep you on your toes! You can also control the <em>reversal probability</em> from the settings panel,
+              which determines how likely the state is to flip after each dice roll.
+            </li>
+          </ul>
+        </li>
+        <li>
+          ⚙️ <strong>Opponent Type:</strong> Every board can be played in one of two ways:<br />
+          - 👤 <em>Player Vs Computer 💻</em><br />
+          - 👤 <em>Player Vs Player 👤</em>
+        </li>
+        <li>
+          💾 <strong>Save, Load & Clear:</strong> Save your game's progress to your browser’s local storage and load it
+          later to continue playing. You’ll find <strong>Save</strong>, <strong>Load</strong>, and
+          <strong>Clear</strong> buttons in the top-right Settings panel.
+        </li>
+        <li>
+          📊 <strong>Token Statistics:</strong> On clicking a token, it displays a detailed stats box showing the
+          <em>number of snakes and ladders encountered</em>, the <em>total dice sum</em>, and the <em>last dice
+            roll</em> — updated live as the game progresses.
+        </li>
+        <li>
+          🏆 <strong>Winner Board:</strong> At the end of each game, a final <strong>Winner Board</strong> presents the
+          winner along with a side-by-side comparison of both tokens’ stats — a neat summary of how the match played
+          out.
+        </li>
+        <li>
+          🧭 <strong>Game Info Box:</strong> A dedicated info panel shows <em>whose turn it is</em>, the current
+          <em>game mode</em>, whether it’s <em>Player vs Computer or Player vs Player</em>, and the <em>current board
+            state</em> (normal or reversed) — especially helpful in <strong>Mixed Mode</strong>, where the state can
+          change unpredictably.
+        </li>
+        <li>
+          🔄 <strong>Gameplay Toggles:</strong> These flexible options can be enabled or disabled in any combination to
+          fine-tune how the game plays:
+          <ul>
+            <li>🎁 <strong>Extra Turn on Six:</strong> If enabled, rolling a six gives the current token an extra turn.
+            </li>
+            <li>🔓 <strong>Unlock Only on Six:</strong> Tokens can only enter the board when a six is rolled — mimicking
+              traditional house rules.</li>
+            <li>⏱ <strong>Auto Roll Timeout:</strong> Prevent stalled games by enabling automatic dice rolls if a player
+              doesn’t roll within a set time limit.</li>
+            <li>🎲 <strong>Forced Dice Rolls:</strong> Enable this fun mode to <em>manually set dice values</em> for
+              each player. Great for <em>testing</em>, <em>playful cheating</em>, or reliving that childhood dream of
+              <em>always rolling sixes</em>!
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>📌 Notes</h3>
+      <ul>
+        <li>
+          This game is meant for casual play and fun — not for serious
+          competition!
+        </li>
+        <li>
+          Some visuals and sounds are used from various online sources and
+          credited in the "Credits" section.
+        </li>
+      </ul>
+      <br />
+      <p>
+        Good luck — and may your dice always roll the way you want (unless
+        it's someone else's turn 😄)! <br />🎲🐍🪜<br />
+        — <em>The Developer (Anurag Mishra)</em>
+      </p>
+      <button id="close-info-button">Close</button>
+    </div>
+
+
+
+
+    <!-- Credits Box -->
+    <div class="credits-box slide-out">
+      <h2>🎮 Game Credits</h2>
+      <div class="credits-container">
+        <div class="credit-card">
+          <h3>🎵 Music & Sound</h3>
+          <p>
+            Background music and sound effects are from
+            <a href="https://pixabay.com/music/" target="_blank">Pixabay</a>,
+            under their royalty-free license. Attribution is not required, but
+            provided out of respect.
+          </p>
+          <p>
+            Additional music is sourced from
+            <a href="https://uppbeat.io" target="_blank">Uppbeat.io</a>, used
+            under the free-use license with proper attribution where needed.
+          </p>
+          <p>
+            All tracks are used for non-commercial, educational and
+            entertainment purposes only.
+          </p>
         </div>
-        <div class="info-row">
-          <span class="info-label">Mode:</span>
-          <span class="info-value" id="mode-value">Classic</span>
+
+        <div class="credit-card">
+          <h3>🖼️ Board Design</h3>
+          <p>
+            The Snake & Ladder board graphic was created by
+            <a href="https://www.freepik.com/author/madedirga" target="_blank">Made_Dirga</a>
+            and downloaded from
+            <a href="https://www.freepik.com/" target="_blank">Freepik.com</a>.
+          </p>
+          <p>
+            Licensed under Freepik's free-use terms for
+            personal/non-commercial projects with attribution.
+          </p>
         </div>
-        <div class="info-row">
-          <span class="info-label">Players:</span>
-          <span class="info-value" id="players-value">Player Vs Computer</span>
+
+        <div class="credit-card">
+          <h3>🧍 Token & Background Art</h3>
+          <p>
+            Token and background visuals are illustrations from the anime
+            <em>The Apothecary Diaries</em>, written by Natsu Hyuuga and
+            illustrated by Touko Shino. The anime is produced by
+            <em>Toho Animation</em> and
+            <em>OLM (Oriental Light and Magic)</em> studios.
+          </p>
+          <p>
+            These are used respectfully as part of a non-commercial, fan-based
+            project. All rights belong to the original creators and studios.
+          </p>
         </div>
-        <div class="info-row" id="mixed-row" style="display: none">
-          <span class="info-label">Mixed State:</span>
-          <span class="info-value" id="mixed-value">Normal</span>
+
+        <div class="credit-card">
+          <h3>📜 Licensing & Usage</h3>
+          <p>
+            This game is created for personal, educational, and entertainment
+            use only.
+          </p>
+          <p>
+            If you are the copyright holder of any asset and would like it
+            removed or credited differently, please reach out to the
+            developer.
+          </p>
         </div>
       </div>
-      <!-- Messages, alerts and pop-ups-->
-      <div class="message invisible">/Empty\</div>
-      <div class="alert-message invisible">/Empty\</div>
-      <!-- Game Info and Playing Instructions Box-->
-      <div class="info-box slide-out">
-        <h2>🎲 How to Play Snake & Ladder</h2>
-        <p>
-          Snake and Ladder is a simple board game traditionally played between 2
-          or more players. The goal is to race your token from square 1 to 100.
-          On your turn, roll the dice and move forward the number of spaces
-          shown.
-        </p>
-        <p>
-          <strong>🎯 Land on a ladder?</strong> You'll instantly climb to the
-          top of it!<br />
-          <strong>🐍 Land on a snake?</strong> It'll slide you down to its
-          tail!<br />
-          First to reach square 100 wins!
-        </p>
-
-        <h3>🧩 Game Features in This Version</h3>
-        <ul>
-          <li>
-            🎨 <strong>Board Selection:</strong> Choose from multiple
-            beautifully designed boards (not customizable).
-          </li>
-          <li>
-            ⚙️ <strong>Game Modes:</strong> Every board can be played in three
-            unique modes:
-            <ul>
-              <li>
-                ✅ <strong>Classic Mode:</strong> Snakes <em>pull</em> you down,
-                ladders <em>lift</em> you up — the traditional way!
-              </li>
-              <li>
-                🌀 <strong>Reversed Mode:</strong> Snakes <em>help</em> you up
-                from their tails, and ladders <em>trip</em> you down — expect
-                the unexpected!
-              </li>
-              <li>
-                ❓ <strong>Mixed Mode:</strong> Snakes and ladders randomly
-                change behavior like the weather! You'll get alerts when they
-                switch roles.
-              </li>
-            </ul>
-          </li>
-          <li>
-            🎲 <strong>Forced Dice Rolls:</strong> You can optionally activate a
-            mode to <em>manually</em> set the dice value for each player.
-            Perfect for playful cheating, testing strategies, or just reliving
-            that childhood dream of always rolling sixes!
-          </li>
-          <li>
-            💾 <strong>Save & Load:</strong> Your game progress can be easily
-            saved locally in your browser by using the <em>Save</em> button.
-            Come back later and pick up right where you left off by using the
-            <em>Load</em> button. Both of these buttons are present on the
-            top-right panel in the Settings menu.
-          </li>
-        </ul>
-        <h3>📌 Notes</h3>
-        <ul>
-          <li>
-            This game is meant for casual play and fun — not for serious
-            competition!
-          </li>
-          <li>
-            Some visuals and sounds are used from various online sources and
-            credited in the "Credits" section.
-          </li>
-        </ul>
+      <button id="close-credits-button">Close</button>
+    </div>
+    <!-- Settings Box-->
+    <div class="settings-box">
+      <h2>Settings Menu</h2>
+      <div class="save-load-clear-panel">
+        Save or Load game:
+        <button id="save-game-button">SAVE</button>
+        <button id="load-game-button">LOAD</button>
+        <button id="clear-game-button">CLEAR</button>
+      </div>
+      <div class="settings-1">
+        <img id="board-preview" src="Resources/Board/Board-1.jpg" />
         <br />
-        <p>
-          Good luck — and may your dice always roll the way you want (unless
-          it's someone else's turn 😄)! <br />🎲🐍🪜<br />
-          — <em>The Developer (Anurag Mishra)</em>
-        </p>
-        <button id="close-info-button">Close</button>
-      </div>
-      <!-- Credits Box -->
-      <div class="credits-box slide-out">
-        <h2>🎮 Game Credits</h2>
-        <div class="credits-container">
-          <div class="credit-card">
-            <h3>🎵 Music & Sound</h3>
-            <p>
-              Background music and sound effects are from
-              <a href="https://pixabay.com/music/" target="_blank">Pixabay</a>,
-              under their royalty-free license. Attribution is not required, but
-              provided out of respect.
-            </p>
-            <p>
-              Additional music is sourced from
-              <a href="https://uppbeat.io" target="_blank">Uppbeat.io</a>, used
-              under the free-use license with proper attribution where needed.
-            </p>
-            <p>
-              All tracks are used for non-commercial, educational and
-              entertainment purposes only.
-            </p>
-          </div>
-
-          <div class="credit-card">
-            <h3>🖼️ Board Design</h3>
-            <p>
-              The Snake & Ladder board graphic was created by
-              <a href="https://www.freepik.com/author/madedirga" target="_blank"
-                >Made_Dirga</a
-              >
-              and downloaded from
-              <a href="https://www.freepik.com/" target="_blank">Freepik.com</a
-              >.
-            </p>
-            <p>
-              Licensed under Freepik's free-use terms for
-              personal/non-commercial projects with attribution.
-            </p>
-          </div>
-
-          <div class="credit-card">
-            <h3>🧍 Token & Background Art</h3>
-            <p>
-              Token and background visuals are illustrations from the anime
-              <em>The Apothecary Diaries</em>, written by Natsu Hyuuga and
-              illustrated by Touko Shino. The anime is produced by
-              <em>Toho Animation</em> and
-              <em>OLM (Oriental Light and Magic)</em> studios.
-            </p>
-            <p>
-              These are used respectfully as part of a non-commercial, fan-based
-              project. All rights belong to the original creators and studios.
-            </p>
-          </div>
-
-          <div class="credit-card">
-            <h3>📜 Licensing & Usage</h3>
-            <p>
-              This game is created for personal, educational, and entertainment
-              use only.
-            </p>
-            <p>
-              If you are the copyright holder of any asset and would like it
-              removed or credited differently, please reach out to the
-              developer.
-            </p>
-          </div>
-        </div>
-        <button id="close-credits-button">Close</button>
-      </div>
-      <!-- Settings Box-->
-      <div class="settings-box">
-        <h2>Settings Menu</h2>
-        <div class="save-load-clear-panel">
-          Save or Load game:
-          <button id="save-game-button">SAVE</button>
-          <button id="load-game-button">LOAD</button>
-          <button id="clear-game-button">CLEAR</button>
-        </div>
-        <div class="settings-1">
-          <img id="board-preview" src="Resources/Board/Board-1.jpg" />
-          <br />
+        <div>
           Choose board:
           <select id="select-board" name="board">
             <option value="Board-1">Board-1</option>
@@ -203,55 +238,53 @@
             <option value="Board-5">Board-5</option>
           </select>
         </div>
-        <div class="settings-2">
-          <div>
-            Choose mode:
-            <select id="select-mode" name="mode">
-              <option value="Classic">Classic</option>
-              <option value="Reversed">Reversed</option>
-              <option value="Mixed">Mixed</option>
-            </select>
-          </div>
-          <div class="reversal-probability-options invisible">
-            <label for="reversal-probability"
-              >Reversal probability (Mixed):</label
-            >
-            <input
-              type="number"
-              id="reversal-probability"
-              name="reversal-probability"
-              min="0"
-              max="100"
-              value="10"
-            />%
-          </div>
-          <br />
-          <div>
-            Choose players:
-            <select id="select-players" name="players-selection">
-              <option value="1-Player-1-Computer">
-                👤Player Vs Computer💻
-              </option>
-              <option value="2-players">👤Player Vs Player👤</option>
-            </select>
-          </div>
-          <br />
-          <div>
-            <label for="volume">Volume:</label>
-            <input
-              type="range"
-              id="volume"
-              name="volume"
-              min="0"
-              max="100"
-              value="100"
-            />
-          </div>
-          <br />
+        <div>
+          Choose mode:
+          <select id="select-mode" name="mode">
+            <option value="Classic">Classic</option>
+            <option value="Reversed">Reversed</option>
+            <option value="Mixed">Mixed</option>
+          </select>
+        </div>
+        <div class="reversal-probability-options invisible">
+          <label for="reversal-probability">
+            Reversal probability (Mixed):</label>
+          <input type="number" id="reversal-probability" name="reversal-probability" min="0" max="100" value="10" />%
+        </div>
+      </div>
+      <div class="settings-2">
+        <div>
+          Choose players:
+          <select id="select-players" name="players-selection">
+            <option value="1-Player-1-Computer">
+              👤Player Vs Computer💻
+            </option>
+            <option value="2-players">👤Player Vs Player👤</option>
+          </select>
+        </div>
+        <br />
+        <div>
+          <label for="volume">Volume:</label>
+          <input type="range" id="volume" name="volume" min="0" max="100" value="100" />
+        </div>
+        <div class="toggles-panel">
+          <h4>Gameplay Toggles:</h4>
           <div>
             <label>
               Extra turn for 6:
-              <input type="checkbox" name="extra-turn-for-six" checked/>
+              <input type="checkbox" name="extra-turn-for-six" checked />
+            </label>
+          </div>
+          <div>
+            <label>
+              Only unlock a token by a roll of 6:
+              <input type="checkbox" name="unlock-for-six-only" checked />
+            </label>
+          </div>
+          <div>
+            <label>
+              Auto roll (after 15 seconds):
+              <input type="checkbox" name="roll-on-timeout" checked />
             </label>
           </div>
           <div>
@@ -259,130 +292,114 @@
               Forced roll: <input type="checkbox" name="forcedRoll" />
             </label>
             <div class="dice-force-options invisible">
-              <label for="dice-number-1-forced"
-                >The dice value for Player 1 (1 to 6):</label
-              >
-              <input
-                type="number"
-                id="dice-number-1-forced"
-                name="dice-number-1-forced"
-                min="1"
-                max="6"
-              />
+              <label for="dice-number-1-forced">The dice value for Player 1 (1 to 6):</label>
+              <input type="number" id="dice-number-1-forced" name="dice-number-1-forced" min="1" max="6" />
               <br />
-              <label for="dice-number-2-forced"
-                >The dice value for Player 2 (1 to 6):</label
-              >
-              <input
-                type="number"
-                id="dice-number-2-forced"
-                name="dice-number-2-forced"
-                min="1"
-                max="6"
-              />
+              <label for="dice-number-2-forced">The dice value for Player 2 (1 to 6):</label>
+              <input type="number" id="dice-number-2-forced" name="dice-number-2-forced" min="1" max="6" />
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="save-credits-info-panel">
-          <button id="save-button">SAVE</button>
-          <button id="credits-button">CREDITS</button>
-          <button id="info-button">INFO</button>
-        </div>
+      <div class="save-credits-info-panel">
+        <button id="save-button">SAVE</button>
+        <button id="credits-button">CREDITS</button>
+        <button id="info-button">INFO</button>
       </div>
-      <!-- Board region-->
-      <div class="board-region">
-        <div class="game">
-          <div
-            class="player overlap indicate-turn-first"
-            style="
-              grid-row-start: 10;
-              grid-row-end: 11;
-              grid-column-start: 1;
-              grid-column-end: 2;
-            "
-          ></div>
-          <div
-            class="player-old"
-            style="
-              grid-row-start: 10;
-              grid-row-end: 11;
-              grid-column-start: 1;
-              grid-column-end: 2;
-            "
-          ></div>
-          <div
-            class="computer"
-            style="
-              grid-row-start: 10;
-              grid-row-end: 11;
-              grid-column-start: 1;
-              grid-column-end: 2;
-            "
-          ></div>
-          <div
-            class="computer-old"
-            style="
-              grid-row-start: 10;
-              grid-row-end: 11;
-              grid-column-start: 1;
-              grid-column-end: 2;
-            "
-          ></div>
-        </div>
-      </div>
-      <!-- Rolling region -->
-      <div class="rolling-region">
-        <h2>Rolling Region:</h2>
-        <img src="Resources/Dices/Dice 1/One.png" alt="One" class="dice" />
-        <img src="Resources/Dices/Dice 1/Two.png" alt="Two" class="dice" />
-        <img src="Resources/Dices/Dice 1/Three.png" alt="Three" class="dice" />
-        <img src="Resources/Dices/Dice 1/Four.png" alt="Four" class="dice" />
-        <img src="Resources/Dices/Dice 1/Five.png" alt="Five" class="dice" />
-        <img src="Resources/Dices/Dice 1/Six.png" alt="Six" class="dice" />
-        <button id="roll-button">ROLL</button>
-        <button id="reset-button">RESET</button>
+      <div class="version">
+        <b>Version: 2.0.0</b>
       </div>
     </div>
-    <!-- Winner Announcement Modal -->
-    <div class="winner-modal invisible">
-      <div class="winner-modal-content">
-        <div class="winner-modal-header">
-          <span class="winner-trophy">🏆</span>
-          <span class="winner-title">Winner!</span>
+    <!-- Board region-->
+    <div class="board-region">
+      <div class="game">
+        <div class="player overlap indicate-turn-first inactive" style="
+              grid-row-start: 10;
+              grid-row-end: 11;
+              grid-column-start: 1;
+              grid-column-end: 2;
+            ">
+          <div>🔒</div>
         </div>
-        <div class="winner-modal-body">
-          <div class="winner-stats">
-            <div class="winner-player" id="winner-player"></div>
-            <div class="vs-icon">VS</div>
-            <div class="winner-player" id="loser-player"></div>
-          </div>
-          <div class="winner-stats-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>Snakes</th>
-                  <th>Ladders</th>
-                  <th>Dice Sum</th>
-                  <th>Last Roll</th>
-                </tr>
-              </thead>
-              <tbody id="winner-stats-tbody">
-                <!-- Filled by JS -->
-              </tbody>
-            </table>
-          </div>
+        <div class="player-old" style="
+              grid-row-start: 10;
+              grid-row-end: 11;
+              grid-column-start: 1;
+              grid-column-end: 2;
+            "></div>
+        <div class="computer inactive" style="
+              grid-row-start: 10;
+              grid-row-end: 11;
+              grid-column-start: 1;
+              grid-column-end: 2;
+            ">
+          <div>🔒</div>
         </div>
-        <div class="winner-modal-footer">
-          <button id="winner-newgame-btn">New Game</button>
-          <button id="winner-share-btn">Share Result</button>
+        <div class="computer-old" style="
+              grid-row-start: 10;
+              grid-row-end: 11;
+              grid-column-start: 1;
+              grid-column-end: 2;
+            "></div>
+      </div>
+    </div>
+    <!-- Rolling region -->
+    <div class="rolling-region">
+      <h2>Rolling Region:</h2>
+      <img src="Resources/Dices/Dice 1/One.png" alt="One" class="dice" />
+      <img src="Resources/Dices/Dice 1/Two.png" alt="Two" class="dice" />
+      <img src="Resources/Dices/Dice 1/Three.png" alt="Three" class="dice" />
+      <img src="Resources/Dices/Dice 1/Four.png" alt="Four" class="dice" />
+      <img src="Resources/Dices/Dice 1/Five.png" alt="Five" class="dice" />
+      <img src="Resources/Dices/Dice 1/Six.png" alt="Six" class="dice" />
+      <button id="roll-button">ROLL</button>
+      <div id="timer-display">
+        <div>00:15</div>
+      </div>
+      <button id="reset-button">RESET</button>
+    </div>
+  </div>
+  <!-- Winner Announcement Modal -->
+  <div class="winner-modal invisible">
+    <div class="winner-modal-content">
+      <div class="winner-modal-header">
+        <span class="winner-trophy">🏆</span>
+        <span class="winner-title">Winner!</span>
+      </div>
+      <div class="winner-modal-body">
+        <div class="winner-stats">
+          <div class="winner-player" id="winner-player"></div>
+          <div class="vs-icon">VS</div>
+          <div class="winner-player" id="loser-player"></div>
+        </div>
+        <div class="winner-stats-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Snakes</th>
+                <th>Ladders</th>
+                <th>Dice Sum</th>
+                <th>Last Roll</th>
+              </tr>
+            </thead>
+            <tbody id="winner-stats-tbody">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="backdrop"></div>
+      <div class="winner-modal-footer">
+        <button id="winner-newgame-btn">New Game</button>
+        <button id="winner-share-btn">Share Result</button>
+      </div>
     </div>
-    <footer>All rights reserved &copy Anurag Mishra</footer>
-    <script type="module" src="myConfig.js"></script>
-    <script type="module" src="myScript.js"></script>
-  </body>
+    <div class="backdrop"></div>
+  </div>
+  <footer>All rights reserved &copy Anurag Mishra</footer>
+  <script type="module" src="myConfig.js"></script>
+  <script type="module" src="myScript.js"></script>
+</body>
+
 </html>

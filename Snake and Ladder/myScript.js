@@ -11,6 +11,7 @@ backgroundMusic.loop = true;
 // Rolling region:
 let dices = document.querySelectorAll(".dice");
 let rollButton = document.querySelector("#roll-button");
+let timerDisplay = document.querySelector("#timer-display");
 let resetButton = document.querySelector("#reset-button");
 
 // Settings:
@@ -23,6 +24,8 @@ let selectMode = document.querySelector("#select-mode");
 let selectPlayers = document.querySelector("#select-players");
 let volumeSlider = document.querySelector("#volume");
 let extraTurnForSixCheckbox = document.querySelector('input[name="extra-turn-for-six"]');
+let unlockForSixOnlyCheckbox = document.querySelector('input[name="unlock-for-six-only"]');
+let rollOnTimeoutCheckbox = document.querySelector('input[name="roll-on-timeout"]');
 let forcedRollCheckbox = document.querySelector('input[name="forcedRoll"]');
 let reversalProbabilityContainer = document.querySelector('.reversal-probability-options');
 let reversalProbabilityInput = document.querySelector('input[name="reversal-probability"]');
@@ -37,6 +40,7 @@ let clearGameButton = document.querySelector("#clear-game-button");
 let creditsBox = document.querySelector(".credits-box");
 let openCreditsButton = document.querySelector("#credits-button");
 let closeCreditsButton = document.querySelector("#close-credits-button");
+
 // Info box:
 let infoBox = document.querySelector(".info-box");
 let openInfoButton = document.querySelector("#info-button");
@@ -48,6 +52,8 @@ let computer = document.querySelector(".computer");
 let playerOld = document.querySelector(".player-old");
 let computerOld = document.querySelector(".computer-old");
 let arrow = document.querySelector("#turn-indicator-arrow");
+let playerLocked = true;
+let computerLocked = true;
 player.append(arrow);
 const statsBox = document.createElement("div");
 statsBox.className = "token-stats-box invisible";
@@ -60,11 +66,14 @@ let winnerDecided = false; // Used for determining when the roll and reset butto
 let delay_ms = 75; // delay_ms between steps in ms
 let boardChanged = false;
 let modeChanged = false;
+let unlockForSixOnlyChanged = false;
 let boardIndex = 0;
 let gameReversed = false;
 let modeIndex = 0;
 let reversalProbability = 0.10;
 let playersIndex = 0; // The option corresponding to the PVP or PVC
+let timerID = null;
+let timeLeft = 15;
 rollButton.disabled = true;
 resetButton.disabled = true;
 player.style.zIndex = "3";
@@ -98,11 +107,41 @@ const winnerNewGameBtn = document.getElementById('winner-newgame-btn');
 const winnerShareBtn = document.getElementById('winner-share-btn');
 const backdrop = document.querySelector('.backdrop');
 
+
+function resetTimer() {
+    timeLeft = 15;
+    timerDisplay.innerHTML = `<div>00:${timeLeft}</div>`;
+}
+function stopTimer() {
+    clearInterval(timerID);
+}
+function startTimer() {
+    // Starts after stopping and resetting only!
+    stopTimer();
+    resetTimer();
+    timerID = setInterval(() => {
+        timeLeft--;
+        if (timeLeft < 10)
+            timerDisplay.innerHTML = `<div>00:0${timeLeft}</div>`;
+        else
+            timerDisplay.innerHTML = `<div>00:${timeLeft}</div>`;
+
+        if (timeLeft == 0) {
+            //Everytime mainFunction is called, it automatically stops and resets the timer
+            mainFunction();
+        }
+    }, 1000);
+}
+
 // Does NOT reset Settings (Board, Mode, Volume, Forced-Roll, etc)!
 function resetGame() {
     for (let dice of dices)
         dice.classList.remove("highlight");
 
+    if (rollOnTimeoutCheckbox.checked)
+        startTimer();
+    playerLocked = true;
+    computerLocked = true;
     diceValueMinus1 = 0;
     playersTurn = true;
     if (modeIndex === 0 || modeIndex === 2)
@@ -115,6 +154,18 @@ function resetGame() {
     player.classList.add("indicate-turn-first");
     computer.classList.remove("indicate-turn-second");
     player.classList.add("overlap");
+    if (unlockForSixOnlyCheckbox.checked) {
+        player.innerHTML = "<div>🔒</div>";
+        computer.innerHTML = "<div>🔒</div>";
+        player.classList.add("inactive");
+        computer.classList.add("inactive");
+    }
+    else {
+        player.innerHTML = "";
+        computer.innerHTML = "";
+        player.classList.remove("inactive");
+        computer.classList.remove("inactive");
+    }
     setCoordinates(player, 10, 1);
     setCoordinates(computer, 10, 1);
     setCoordinates(playerOld, 10, 1);
@@ -196,6 +247,13 @@ function setCoordinates(ele, newRow, newCol) {
 function movesRight(ele) {
     let [row, col] = getCoordinates(ele);
     return ((row & 1) ? false : true);
+}
+
+function isTokenUnlocked(ele) {
+    if (ele === player)
+        return (!unlockForSixOnlyCheckbox.checked) || (unlockForSixOnlyCheckbox.checked && !playerLocked);
+    else
+        return (!unlockForSixOnlyCheckbox.checked) || (unlockForSixOnlyCheckbox.checked && !computerLocked);
 }
 
 function moveTokenByOne(ele) {
@@ -377,6 +435,8 @@ body.winner-modal-open .winner-modal * {
 document.head.appendChild(style);
 
 function announceWinner(winnerType) {
+    resetTimer();
+    stopTimer();
     showWinnerModal(winnerType);
 }
 
@@ -446,54 +506,79 @@ computer.addEventListener("click", (e) => {
     showStatsBox("computer", e);
 });
 
-function snakeAndLadderMovements(ele) {
+function getCellCenter(row, col) {
+    const gameRect = game.getBoundingClientRect();
+    const rows = 10, cols = 10;
+    const cellWidth = gameRect.width / cols;
+    const cellHeight = gameRect.height / rows;
+    return {
+        x: gameRect.left + (col - 0.5) * cellWidth,
+        y: gameRect.top + (row - 0.5) * cellHeight
+    };
+}
+
+async function animateTokenDirect(ele, destRow, destCol, isLadder, duration = 500) {
+    const [currRow, currCol] = getCoordinates(ele);
+    const from = getCellCenter(currRow, currCol);
+    const to = getCellCenter(destRow, destCol);
+
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+
+    if (isLadder) {
+        ele.style.transition = `transform ${duration}ms linear`;
+        ele.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+    else {
+        ele.style.transition = `transform ${duration}ms linear, rotate ${duration}ms ease-in-out`;
+        ele.style.transform = `translate(${dx}px, ${dy}px) rotate(720deg)`;
+    }
+
+    await new Promise((res) => setTimeout(res, duration));
+
+    ele.style.transition = 'none';
+    ele.style.transform = '';
+    setCoordinates(ele, destRow, destCol);
+    // Do NOT set ele.style.transition = '' here!
+}
+
+async function snakeAndLadderMovements(ele) {
     let [currRow, currCol] = getCoordinates(ele);
     let key = `${currRow},${currCol}`;
     let tokenType = (ele === player) ? "player" : "computer";
     let newCoord;
 
-    // Snake or Ladder movements:
-    // Note: only check snake or ladder if the token is NOT on 100th tile!
     if (getCoordinates(ele)[0] !== 1 || getCoordinates(ele)[1] !== 1) {
         switch (gameReversed) {
-
-            // If snakes and ladders are NOT reversed
             case false:
-                // Ladder:
                 newCoord = ladderMap[boardIndex].get(key);
                 if (newCoord !== undefined) {
-                    setCoordinates(ele, newCoord.row, newCoord.col);
                     playSound("Resources/Sound/Ladder.mp3", 3000);
                     displayMessage("Climbed-up the ladder!", 3000, "green");
+                    await animateTokenDirect(ele, newCoord.row, newCoord.col, true);
                     stats[tokenType].ladders += 1;
                 }
-                // Snake:
                 newCoord = snakeMap[boardIndex].get(key);
                 if (newCoord !== undefined) {
-                    setCoordinates(ele, newCoord.row, newCoord.col);
                     playSound("Resources/Sound/Snake.mp3", 3000);
                     displayMessage("Eaten by the snake!", 3000, "red");
+                    await animateTokenDirect(ele, newCoord.row, newCoord.col, false);
                     stats[tokenType].snakes += 1;
                 }
                 break;
-
-            //If snakes and ladders are reversed
             case true:
-                // Ladder:
                 newCoord = ladderMapReversed[boardIndex].get(key);
                 if (newCoord !== undefined) {
-                    setCoordinates(ele, newCoord.row, newCoord.col);
                     playSound("Resources/Sound/Ladder.mp3", 3000);
                     displayMessage("Tripped down the ladder!", 3000, "red");
+                    await animateTokenDirect(ele, newCoord.row, newCoord.col, true);
                     stats[tokenType].ladders += 1;
                 }
-
-                // Snake:
                 newCoord = snakeMapReversed[boardIndex].get(key);
                 if (newCoord !== undefined) {
-                    setCoordinates(ele, newCoord.row, newCoord.col);
                     playSound("Resources/Sound/Snake.mp3", 3000);
                     displayMessage("Wait, the snake helped!?", 3000, "green");
+                    await animateTokenDirect(ele, newCoord.row, newCoord.col, false);
                     stats[tokenType].snakes += 1;
                 }
                 break;
@@ -509,6 +594,8 @@ backgroundMusic.addEventListener("canplaythrough", () => {
 settingsButton.addEventListener("click", () => {
     settingsBox.classList.remove("slide-out");
     backdrop.classList.remove("invisible");
+    stopTimer();
+    resetTimer();
     rollButton.disabled = true;
     resetButton.disabled = true;
 });
@@ -528,7 +615,8 @@ selectMode.addEventListener("change", () => {
 
 selectPlayers.addEventListener("change", () => {
     modeChanged = true;
-})
+});
+
 volumeSlider.addEventListener('input', function () {
     backgroundMusic.volume = this.value / 100;
 });
@@ -543,6 +631,10 @@ saveGameButton.addEventListener("click", () => {
     localStorage.setItem('modeIndex', modeIndex);
     localStorage.setItem('playersIndex', playersIndex);
     localStorage.setItem('gameReversed', gameReversed);
+    localStorage.setItem('unlockForSixOnlyCheckboxChecked', unlockForSixOnlyCheckbox.checked);
+    localStorage.setItem('extraTurnForSixCheckboxChecked', extraTurnForSixCheckbox.checked);
+    localStorage.setItem('playerLocked', playerLocked);
+    localStorage.setItem('computerLocked', computerLocked);
     localStorage.setItem("stats", JSON.stringify(stats));
     // gameReversed is useful for determining the current state of the mixed-mode
     displayAlertMessage("The game has been SAVED!", 3000, "blue", "white");
@@ -562,14 +654,19 @@ loadGameButton.addEventListener("click", () => {
     let modeIndexStored = parseInt(localStorage.getItem('modeIndex'), 10);
     let playersIndexStored = parseInt(localStorage.getItem('playersIndex'), 10);
     let gameReversedStored = (localStorage.getItem('gameReversed') === 'true');
+    let unlockForSixOnlyCheckboxCheckedStored = (localStorage.getItem('unlockForSixOnlyCheckboxChecked') === 'true');
+    let extraTurnForSixCheckboxCheckedStored = (localStorage.getItem('extraTurnForSixCheckboxChecked') === 'true');
+    let playerLockedStored = (localStorage.getItem('playerLocked') === 'true');
+    let computerLockedStored = (localStorage.getItem('computerLocked') === 'true');
     let statsStored = JSON.parse(localStorage.getItem("stats"));
+
     let playersX = parseInt(localStorage.getItem('playersX'), 10);
     let playersY = parseInt(localStorage.getItem('playersY'), 10);
     let computerX = parseInt(localStorage.getItem('computerX'), 10);
     let computerY = parseInt(localStorage.getItem('computerY'), 10);
 
     // Checking if any data is missing (i.e., if file is corrupted)
-    for (let dataRetrieved of [playersTurnStored, boardIndexStored, modeIndexStored, playersIndexStored, gameReversedStored, statsStored, playersX, playersY, computerX, computerY]) {
+    for (let dataRetrieved of [playersTurnStored, boardIndexStored, modeIndexStored, playersIndexStored, gameReversedStored, statsStored, playersX, playersY, computerX, computerY, unlockForSixOnlyCheckboxCheckedStored, extraTurnForSixCheckboxCheckedStored, playerLockedStored, computerLockedStored]) {
         if (dataRetrieved === null || dataRetrieved === undefined || Number.isNaN(dataRetrieved)) {
             displayAlertMessage("The game CANNOT be loaded because it is corrupted!", 3000, "red", "white");
             return;
@@ -582,6 +679,10 @@ loadGameButton.addEventListener("click", () => {
     modeIndex = modeIndexStored;
     playersIndex = playersIndexStored;
     gameReversed = gameReversedStored;
+    unlockForSixOnlyCheckbox.checked = unlockForSixOnlyCheckboxCheckedStored;
+    extraTurnForSixCheckbox.checked = extraTurnForSixCheckboxCheckedStored;
+    playerLocked = playerLockedStored;
+    computerLocked = computerLockedStored;
     stats = statsStored;
     selectBoard.selectedIndex = boardIndex;
     selectMode.selectedIndex = modeIndex;
@@ -610,13 +711,30 @@ loadGameButton.addEventListener("click", () => {
         computer.append(arrow);
     }
 
+    if (!isTokenUnlocked(player)) {
+        player.innerHTML = "<div>🔒</div>";
+        player.classList.add("inactive");
+    }
+    else {
+        player.innerHTML = "";
+        player.classList.remove("inactive");
+    }
+    if (!isTokenUnlocked(computer)) {
+        computer.innerHTML = "<div>🔒</div>";
+        computer.classList.add("inactive");
+    }
+    else {
+        computer.innerHTML = "";
+        computer.classList.remove("inactive");
+    }
+
     // Alert Messages:
     if (modeIndex === 0)
-        displayAlertMessage("The game has been LOADED in CLASSIC!", 4000, "white", "black");
+        displayAlertMessage("The game has been LOADED in CLASSIC!", 3000, "white", "black");
     else if (modeIndex === 1)
-        displayAlertMessage("The game has been LOADED in REVERSED!", 4000, "purple", "white");
+        displayAlertMessage("The game has been LOADED in REVERSED!", 3000, "purple", "white");
     else {
-        displayAlertMessage(`The game has been LOADED in MIXED: ${gameReversed ? 'Reversed' : 'Normal'}!`, 4000, "darkorange", "black");
+        displayAlertMessage(`The game has been LOADED in MIXED: ${gameReversed ? 'Reversed' : 'Normal'}!`, 3000, "darkorange", "black");
         reversalProbabilityContainer.classList.remove("invisible");
     }
     modeChanged = false; //Because on loading we don't want to force-reset otherwise no worth in it!
@@ -624,12 +742,28 @@ loadGameButton.addEventListener("click", () => {
 });
 
 clearGameButton.addEventListener("click", () => {
-    displayAlertMessage("⚠️ Warning! Double click to DELETE the stored save file!", 4000, "red", "white");
+    displayAlertMessage("⚠️ Warning! Double click to DELETE the stored save file!", 3000, "red", "white");
 });
 
 clearGameButton.addEventListener("dblclick", () => {
     localStorage.clear();
-    displayAlertMessage("The game has been CLEARED!", 4000, "red", "white");
+    displayAlertMessage("The game has been CLEARED!", 3000, "red", "white");
+});
+
+unlockForSixOnlyCheckbox.addEventListener("click", () => {
+    if (unlockForSixOnlyCheckbox.checked) {
+        player.innerHTML = "<div>🔒</div>";
+        computer.innerHTML = "<div>🔒</div>";
+        player.classList.add("inactive");
+        computer.classList.add("inactive");
+    }
+    else {
+        player.innerHTML = "";
+        computer.innerHTML = "";
+        player.classList.remove("inactive");
+        computer.classList.remove("inactive");
+    }
+    unlockForSixOnlyChanged = true;
 });
 
 forcedRollCheckbox.addEventListener("click", () => {
@@ -643,7 +777,7 @@ resetButton.addEventListener("click", () => {
 saveSettingsButton.addEventListener("click", () => {
 
     backdrop.classList.add("invisible");
-    if (modeChanged || boardChanged) {
+    if (modeChanged || boardChanged || unlockForSixOnlyChanged) {
         resetGame();
     }
     boardIndex = selectBoard.selectedIndex;
@@ -656,13 +790,12 @@ saveSettingsButton.addEventListener("click", () => {
     }
     else
         reversalProbability = reversalProbability / 100;
-    console.log('The reversal probability:', reversalProbability);
     game.style.backgroundImage = `url(Resources/Board/${selectBoard.value}.jpg)`;
     settingsBox.classList.add("slide-out");
     // settingsBox.disabled = false;
 
     // Mode-change message only when the mode and/or the board settings are changed!
-    if (modeChanged || boardChanged || gameStarting) {
+    if (modeChanged || boardChanged || unlockForSixOnlyChanged || gameStarting) {
 
         playSound("Resources/Sound/Notification.mp3", 3000);
         if (modeIndex === 0) {
@@ -683,6 +816,7 @@ saveSettingsButton.addEventListener("click", () => {
         }
         modeChanged = false;
         boardChanged = false;
+        unlockForSixOnlyChanged = false;
         gameStarting = false;
     }
     updateTurnInfoBox();
@@ -691,6 +825,13 @@ saveSettingsButton.addEventListener("click", () => {
         rollButton.disabled = false;
         resetButton.disabled = false;
     }
+    if (rollOnTimeoutCheckbox.checked) startTimer();
+});
+
+rollOnTimeoutCheckbox.addEventListener("click", () => {
+    stopTimer();
+    resetTimer();
+    timerDisplay.classList.toggle('invisible');
 });
 
 openCreditsButton.addEventListener("click", () => {
@@ -781,15 +922,16 @@ function checkWinnerDecidedAndRunAnimation(ele) {
         winnerDecided = true;
         playSound("Resources/Sound/Victory.wav");
         announceWinner(playersTurn ? "player" : "computer");
+        stopTimer();
+        resetTimer();
     }
 }
 
 // ***************************************** Rolling region **********************************************
-
-// skipEnablingButtons being true implies that it doesn't need to re-enable them.
-// Not enabling is useful when computer's turn is there just after.
 async function mainFunction() {
 
+    stopTimer();
+    resetTimer();
     let ele = (playersTurn) ? player : computer; //Refers to the current player
     let old = (playersTurn) ? playerOld : computerOld; //Refers to the current player's shadow
 
@@ -806,39 +948,52 @@ async function mainFunction() {
     /* After the dice roll */
     // If mixed mode, then sudden reversal possibility just after dice roll concluded
     mixedModeRandomness();
+
     // Update the token's stats once the roll ends
     if (playersTurn) {
         stats.player.lastRoll = diceValueMinus1 + 1;
-        stats.player.diceSum += diceValueMinus1 + 1;
+        if (isTokenUnlocked(player)) stats.player.diceSum += diceValueMinus1 + 1;
     } else {
         stats.computer.lastRoll = diceValueMinus1 + 1;
-        stats.computer.diceSum += diceValueMinus1 + 1;
+        if (isTokenUnlocked(computer)) stats.computer.diceSum += diceValueMinus1 + 1;
     }
+    updateTurnInfoBox(); //For mixed mode reversals
 
     /* Token movements */
     // Pre-incremental movement: Snake and Ladder Movements for both tokens (sudden reversal may affect the other player too!)
-    snakeAndLadderMovements(player);
-    snakeAndLadderMovements(computer);
+    await snakeAndLadderMovements(player);
+    await snakeAndLadderMovements(computer);
     checkWinnerDecidedAndRunAnimation(player);
     checkWinnerDecidedAndRunAnimation(computer);
 
     // Incremental movements: The basic token movements for the current token only.
     // Possible that sudden reversal caused the current token or another token to reach the 100 by ladder/snake (i.e., the winner got decided). Thus, we should not allow the current token to move in that case.
-    if (!winnerDecided) {
+    if (!winnerDecided && isTokenUnlocked(ele)) {
         await incrementalMovementsPromise(ele, old);
         checkWinnerDecidedAndRunAnimation(ele);
     }
 
     // Post-incremental movement: Snake and Ladder Movements are now only possible for the current token as only it went through a change in position.
     // Possible that the winner (who is the current token) got decided due to the incremental movements.
-    if (!winnerDecided) {
-        snakeAndLadderMovements(ele);
+    if (!winnerDecided && isTokenUnlocked(ele)) {
+        await snakeAndLadderMovements(ele);
         checkWinnerDecidedAndRunAnimation(ele);
     }
 
     // Taking the current token to its original zIndex
     if (overLap()) player.classList.add("overlap");
     ele.style.zIndex = playersTurn ? "3" : "2";
+
+    // Unlocking the token (if required) after the dice roll
+    if (!isTokenUnlocked(ele) && diceValueMinus1 === 5) {
+        ele.classList.remove("inactive");
+        ele.innerText = "";
+        playersTurn ? (playerLocked = false) : (computerLocked = false);
+        playSound("Resources/Sound/Notification.mp3", 1000);
+        displayMessage("🎲 Token unlocked due to a six ⭐!", 1000, "#1A237E", "white");
+        // Waiting for sometime because, if extra turn for six is toggled as well, this message will be overwritten immediately
+        await new Promise((res) => setTimeout(res, 1000));
+    }
 
     // Give the dice to the next token only if necessary
     if ((!extraTurnForSixCheckbox.checked) || (extraTurnForSixCheckbox.checked && diceValueMinus1 != 5)) {
@@ -853,13 +1008,17 @@ async function mainFunction() {
         }
         player.classList.toggle("indicate-turn-first");
         computer.classList.toggle("indicate-turn-second");
-        updateTurnInfoBox();
     }
     else {
-        playSound("Resources/Sound/Notification.mp3", 3000);
-        displayMessage("🎲 Extra turn for a six ⭐!", 3000, "#1A237E", "white");
+        playSound("Resources/Sound/Notification.mp3", 2000);
+        displayMessage("🎲 Extra turn for a six ⭐!", 2000, "#1A237E", "white");
     }
+    updateTurnInfoBox();
+    // Don't pass the next turn yet
+    await new Promise((res) => setTimeout(res, 500));
 
+    if (rollOnTimeoutCheckbox.checked && !winnerDecided)
+        startTimer();
     // If the computer has its own token and it is the computer's turn now
     if (playersIndex == 0 && !playersTurn && !winnerDecided) {
         await mainFunction();
@@ -868,7 +1027,6 @@ async function mainFunction() {
         resetButton.disabled = false;
         rollButton.disabled = false;
     }
-
 }
 
 rollButton.addEventListener("click", mainFunction);
