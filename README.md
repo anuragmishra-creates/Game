@@ -55,6 +55,25 @@ This version of Snake & Ladder includes several gameplay and visual enhancements
 
 ---
 
+## 🎮  Game Preview
+
+### Game Board
+![Game Board](./Resources/Screenshots/SS%202.png)
+
+### Settings and Options
+![Settings and Options](./Resources/Screenshots/SS%201.png)
+
+### Player Stats
+![Player Stats](./Resources/Screenshots/SS%203.png)
+
+### Alert Notification
+![Alert Notification](./Resources/Screenshots/SS%204.png)
+
+### Winner Board
+![Winner Board](./Resources/Screenshots/SS%205.png)
+
+---
+
 ## 🔮  Features to be added in the future updates (soon)
 
 - Timed challenge toggle
