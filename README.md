@@ -53,6 +53,15 @@ This version of Snake & Ladder includes several gameplay and visual enhancements
   - ⏱ **Auto Roll Timeout:** Prevent stalled games by enabling automatic dice rolls if a player doesn’t roll within a set time limit.
   - 🎲 **Forced Dice Rolls:** Enable this fun mode to manually set dice values for each player. Great for testing, playful cheating, or reliving that childhood dream of always rolling sixes!
 
+- 🔊 **Immersive Sound & Notifications**  
+  Enjoy a fully interactive experience with rich audio and smart alerts:  
+  - 🎵 **Background music** with adjustable volume from the settings panel.  
+  - 🐍 **Snake hiss** and 🪜 **ladder climb** sounds that react to gameplay events.  
+  - 🔔 **Notification sounds and pop-ups** for key moments — such as *climbed the ladder*, *tripped down the ladder*, *helped by the snake*, *eaten by the snake*, *board reversed*, *extra turn for rolling six*, *token unlocked*, and more — keeping you informed and engaged throughout the match.  
+
+- 📋 **Share Match Summary**  
+  After the game ends, you can **copy the final outcome** — including each player’s **number of snakes and ladders encountered**, **last dice roll**, and **total sum of all dice rolls** — perfect for sharing or recording your game stats.
+
 ---
 
 ## 🎮  Game Preview
